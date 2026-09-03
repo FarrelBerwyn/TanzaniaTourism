@@ -1,0 +1,110 @@
+import React, { useState } from 'react';
+import { Sparkles, ArrowRight } from 'lucide-react';
+import { Language } from '../types';
+import { FACILITIES_DATA } from '../data/facilities';
+import { TRANSLATIONS } from '../data/translations';
+
+interface FacilitiesSectionProps {
+  currentLang: Language;
+}
+
+export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({ currentLang }) => {
+  const t = TRANSLATIONS[currentLang];
+  const [activeFacilityId, setActiveFacilityId] = useState(FACILITIES_DATA[0].id);
+
+  const activeFacility =
+    FACILITIES_DATA.find((f) => f.id === activeFacilityId) || FACILITIES_DATA[0];
+
+  return (
+    <section id="facilities" className="py-24 md:py-32 bg-[#141413] text-[#FAF8F5]">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        {/* Section Heading */}
+        <div className="max-w-3xl mb-16">
+          <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.3em] uppercase text-[#C4A27A] font-medium mb-3">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Curated Estate Amenities</span>
+          </div>
+          <h2
+            id="facilities-heading"
+            className="font-serif text-3xl sm:text-4xl md:text-5xl font-light tracking-[0.05em] uppercase text-[#FAF8F5] mb-4"
+          >
+            {t.facilities.heading}
+          </h2>
+          <p className="text-[#D8CCB8]/80 text-sm sm:text-base leading-relaxed">
+            {t.facilities.subhead}
+          </p>
+        </div>
+
+        {/* Dynamic Editorial Showcase Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-16">
+          {/* Left Column: Interactive Facility List */}
+          <div className="lg:col-span-5 space-y-2">
+            {FACILITIES_DATA.map((fac) => {
+              const isSelected = fac.id === activeFacilityId;
+              return (
+                <button
+                  key={fac.id}
+                  onClick={() => setActiveFacilityId(fac.id)}
+                  className={`w-full text-left p-4 sm:p-5 rounded-lg transition-all duration-300 flex items-center justify-between border ${
+                    isSelected
+                      ? 'bg-[#22211F] border-[#B8966C] text-[#FAF8F5] shadow-lg translate-x-1'
+                      : 'bg-transparent border-[#2C2B28] text-[#D8CCB8]/70 hover:bg-[#1C1B1A] hover:text-[#FAF8F5]'
+                  }`}
+                >
+                  <div className="pr-4">
+                    <span className="text-[10px] tracking-[0.2em] uppercase text-[#C4A27A] block font-mono">
+                      {fac.category}
+                    </span>
+                    <h3 className="font-serif text-lg sm:text-xl font-normal tracking-wide">
+                      {fac.title}
+                    </h3>
+                  </div>
+                  <ArrowRight
+                    className={`w-4 h-4 transition-transform flex-shrink-0 ${
+                      isSelected ? 'text-[#C4A27A] translate-x-1' : 'opacity-30'
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Column: Hero Facility Photography & Detailed Narrative */}
+          <div className="lg:col-span-7 sticky top-24">
+            <div className="bg-[#1C1B1A] border border-[#2C2B28] rounded-2xl overflow-hidden shadow-2xl">
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <img
+                  key={activeFacility.image}
+                  src={activeFacility.image}
+                  alt={activeFacility.title}
+                  className="w-full h-full object-cover transition-all duration-700 animate-fadeIn"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1C1B1A] via-transparent to-transparent opacity-80" />
+                {activeFacility.highlight && (
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded text-[11px] font-mono tracking-wider text-[#C4A27A]">
+                    ★ {activeFacility.highlight}
+                  </div>
+                )}
+              </div>
+
+              <div className="p-8">
+                <div className="flex items-center justify-between text-xs tracking-widest uppercase text-[#A07E54] mb-2 font-mono">
+                  <span>{activeFacility.category}</span>
+                  {activeFacility.hours && <span>{activeFacility.hours}</span>}
+                </div>
+
+                <h3 className="font-serif text-2xl sm:text-3xl font-light text-[#FAF8F5] mb-4">
+                  {activeFacility.title}
+                </h3>
+
+                <p className="text-sm sm:text-base text-[#D8CCB8] leading-relaxed">
+                  {activeFacility.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};

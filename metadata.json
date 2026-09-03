@@ -1,0 +1,6 @@
+{
+  "name": "The Zanzibar Retreat",
+  "description": "Luxury boutique villa and private sanctuary in Zanzibar, Tanzania. Discover authentic hospitality, bespoke experiences, and tranquil Indian Ocean living.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
