@@ -7,11 +7,17 @@ import { QuickBookingBar } from './components/QuickBookingBar';
 import { PropertyIntro } from './components/PropertyIntro';
 import { VillasSection } from './components/VillasSection';
 import { VillaDetailModal } from './components/VillaDetailModal';
-import { FacilitiesSection } from './components/FacilitiesSection';
+import { PropertyExperienceSection } from './components/PropertyExperienceSection';
 import { DiningSection } from './components/DiningSection';
-import { PromotionalVideoSection } from './components/PromotionalVideoSection';
 import { ExperiencesSection } from './components/ExperiencesSection';
-import { SurroundingsSection } from './components/SurroundingsSection';
+import { ExploreZanzibarSection } from './components/ExploreZanzibarSection';
+import { BeyondZanzibarSection } from './components/BeyondZanzibarSection';
+import { CustomItinerarySection } from './components/CustomItinerarySection';
+import { ShuttleSection } from './components/ShuttleSection';
+import { ConciergeSection } from './components/ConciergeSection';
+import { WhyStaySection } from './components/WhyStaySection';
+import { FacilitiesSection } from './components/FacilitiesSection';
+import { PromotionalVideoSection } from './components/PromotionalVideoSection';
 import { GallerySection } from './components/GallerySection';
 import { ReviewsSection } from './components/ReviewsSection';
 import { OtaChannelsSection } from './components/OtaChannelsSection';
@@ -20,7 +26,6 @@ import { FinalCtaSection } from './components/FinalCtaSection';
 import { Footer } from './components/Footer';
 import { BookingModal } from './components/BookingModal';
 import { ChatAssistant } from './components/ChatAssistant';
-import { SecondBannerSection } from './components/SecondBannerSection';
 import { CmsAdminModal } from './components/CmsAdminModal';
 
 export default function App() {
@@ -37,6 +42,15 @@ export default function App() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedVillaForDetail, setSelectedVillaForDetail] = useState<Villa | null>(null);
   const [cmsPitchModalOpen, setCmsPitchModalOpen] = useState(false);
+  const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
+  const [supportInitialQuery, setSupportInitialQuery] = useState<string | null>(null);
+
+  const handleOpenSupportChat = (initialQuery?: string) => {
+    if (initialQuery) {
+      setSupportInitialQuery(initialQuery);
+    }
+    setIsSupportChatOpen(true);
+  };
 
   // Preselected booking parameters
   const [bookingParams, setBookingParams] = useState<{
@@ -85,85 +99,119 @@ export default function App() {
         onOpenCmsPitch={() => setCmsPitchModalOpen(true)}
       />
 
-      {/* Main Page Flow (Sections 01 - 15) */}
+      {/* Main Page Flow (Curated Customer Journey) */}
       <main id="main-content">
-        {/* Section 01: Hero Section */}
+        {/* 01: Hero Section */}
         <HeroSection
           currentLang={currentLang}
           onOpenBooking={() => handleOpenBooking()}
         />
 
-        {/* Section 02: Quick Booking / Search Bar */}
+        {/* 02: Quick Search / Booking Bar */}
         <QuickBookingBar
           currentLang={currentLang}
           onCheckAvailability={handleCheckAvailability}
         />
 
-        {/* Section 02.5: Second Image Banner (Previous First Banner Image) */}
-        <SecondBannerSection
-          currentLang={currentLang}
-          onOpenBooking={() => handleOpenBooking()}
-        />
-
-        {/* Section 03: Property Introduction */}
+        {/* 03: Editorial Introduction (MORE THAN A STAY) */}
         <PropertyIntro currentLang={currentLang} />
 
-        {/* Section 04: Accommodation / Room Showcase (8 Villas) */}
+        {/* 04: Stay Section (STAY YOUR WAY - Villas, Bungalows, Rooms) */}
         <VillasSection
           currentLang={currentLang}
           onSelectVilla={(v) => setSelectedVillaForDetail(v)}
           onRequestBooking={(id) => handleOpenBooking(id)}
         />
 
-        {/* Section 05: Facilities & Amenities */}
-        <FacilitiesSection currentLang={currentLang} />
+        {/* 05: Property Experience (DISCOVER THE RETREAT) */}
+        <PropertyExperienceSection currentLang={currentLang} />
 
-        {/* Section 06: Dining & Restaurant Experience */}
+        {/* 06: Dining Section (TASTE ZANZIBAR + FROM OUR GARDEN TO YOUR TABLE) */}
         <DiningSection currentLang={currentLang} />
 
-        {/* Section 07: Promotional Video Cinematic Journey */}
-        <PromotionalVideoSection currentLang={currentLang} />
-
-        {/* Section 08: Activities, Experiences & Discover Tanzania */}
+        {/* 07: Experiences Section (EXPERIENCES - Discover Zanzibar beyond the ordinary) */}
         <ExperiencesSection
+          currentLang={currentLang}
+          onOpenBooking={() => handleOpenBooking()}
+          onOpenSupportChat={handleOpenSupportChat}
+        />
+
+        {/* 08: Explore Zanzibar (Stone Town, Mnemba, Spice Farms, Jozani, Nungwi) */}
+        <ExploreZanzibarSection
           currentLang={currentLang}
           onOpenBooking={() => handleOpenBooking()}
         />
 
-        {/* Section 09: Surroundings & Attractions */}
-        <SurroundingsSection currentLang={currentLang} />
+        {/* 09: Beyond Zanzibar & Tanzania Safari (ONE ISLAND. A WHOLE TANZANIA TO DISCOVER.) */}
+        <BeyondZanzibarSection
+          currentLang={currentLang}
+          onOpenBooking={() => handleOpenBooking()}
+          onOpenSupportChat={handleOpenSupportChat}
+        />
 
-        {/* Section 10: Photo Gallery */}
+        {/* 10: Custom Itinerary Builder (BUILD YOUR TANZANIA JOURNEY) */}
+        <CustomItinerarySection
+          currentLang={currentLang}
+          onOpenSupportChat={handleOpenSupportChat}
+        />
+
+        {/* 11: Shuttle & Arrival Service (ARRIVE. RELAX. WE'LL TAKE CARE OF THE REST.) */}
+        <ShuttleSection
+          currentLang={currentLang}
+          onOpenBooking={() => handleOpenBooking()}
+        />
+
+        {/* 12: Concierge Feature (YOUR JOURNEY, PERSONALLY ARRANGED) */}
+        <ConciergeSection
+          currentLang={currentLang}
+          onOpenSupportChat={handleOpenSupportChat}
+        />
+
+        {/* 13: Why Stay With Us (WHY ZANZIRANGI HOUSE) */}
+        <WhyStaySection currentLang={currentLang} />
+
+        {/* 14: Promotional Film Journey */}
+        <PromotionalVideoSection currentLang={currentLang} />
+
+        {/* 15: Facilities & Amenities */}
+        <FacilitiesSection currentLang={currentLang} />
+
+        {/* 16: Gallery Section (7 Luxury Categories + Lightbox) */}
         <GallerySection currentLang={currentLang} />
 
-        {/* Section 11: Guest Reviews & Testimonials */}
+        {/* 17: Guest Impressions & Testimonials */}
         <ReviewsSection currentLang={currentLang} />
 
-        {/* Section 12: OTA Booking Distribution Channels */}
+        {/* 18: OTA Distribution Trust Channels */}
         <OtaChannelsSection currentLang={currentLang} />
 
-        {/* Section 13: Location, Contact & Map */}
+        {/* 19: Location, Map & Directions */}
         <MapSection currentLang={currentLang} />
 
-        {/* Section 14: Final Call To Action */}
+        {/* 20: Final Call To Action */}
         <FinalCtaSection
           currentLang={currentLang}
           onOpenBooking={() => handleOpenBooking()}
         />
       </main>
 
-      {/* Section 15: Footer */}
+      {/* 21: Sophisticated Luxury Footer */}
       <Footer
         currentLang={currentLang}
         onSelectLang={setCurrentLang}
         onOpenBooking={() => handleOpenBooking()}
         onOpenCmsPitch={() => setCmsPitchModalOpen(true)}
+        onOpenSupportChat={handleOpenSupportChat}
       />
 
-      {/* Customer Support Chat Assistant in Bottom Left Corner */}
+      {/* Unified Personal Concierge & Support Chat Assistant in Bottom Left */}
       <ChatAssistant
         currentLang={currentLang}
         onOpenBooking={() => handleOpenBooking()}
+        isOpen={isSupportChatOpen}
+        onToggleOpen={setIsSupportChatOpen}
+        externalQuery={supportInitialQuery}
+        onClearExternalQuery={() => setSupportInitialQuery(null)}
       />
 
       {/* Villa Detail Modal */}
@@ -185,6 +233,7 @@ export default function App() {
         initialGuests={bookingParams.guests}
         currentLang={currentLang}
         onClose={() => setBookingModalOpen(false)}
+        onOpenSupportChat={handleOpenSupportChat}
       />
 
       {/* Client Pitch: Admin / CMS Studio Modal */}

@@ -1,6 +1,6 @@
 export type Language = 'en' | 'fr' | 'sw' | 'es' | 'it' | 'ar' | 'zh';
 
-export type GalleryCategory = 'villas' | 'rooms' | 'pool' | 'dining' | 'food' | 'beach' | 'facilities' | 'experiences';
+export type GalleryCategory = 'property' | 'villas' | 'dining' | 'pool' | 'garden' | 'zanzibar' | 'experiences';
 
 export interface PropertyConfig {
   name: string;

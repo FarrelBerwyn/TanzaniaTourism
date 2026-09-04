@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, Users, Bed, Bath, Maximize2, Eye, Check, Calendar, ArrowRight } from 'lucide-react';
+import { X, Users, Bed, Bath, Maximize2, Eye, Check, Calendar, ArrowRight, Utensils, MessageSquare } from 'lucide-react';
 import { Villa, Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
+import { PROPERTY_CONFIG } from '../data/propertyConfig';
 
 interface VillaDetailModalProps {
   villa: Villa | null;
@@ -18,10 +19,21 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
 }) => {
   if (!villa) return null;
 
-  const t = TRANSLATIONS[currentLang];
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const allImages = villa.images && villa.images.length > 0 ? villa.images : [villa.heroImage];
+
+  const kitchenInfo =
+    villa.id === 'villa-08'
+      ? 'Fully equipped chef prep kitchen for private in-villa banquets'
+      : villa.id === 'villa-05'
+      ? 'Private dining pergola with dedicated in-villa butler service'
+      : 'In-villa private dining service available (Kitchenette details coming soon)';
+
+  const whatsappInquiryUrl = `https://wa.me/${PROPERTY_CONFIG.whatsappNumber}?text=${encodeURIComponent(
+    `Hello Zanzirangi House Concierge, I am interested in reserving ${villa.name} (${villa.roomNumber}). Please provide current availability and rates.`
+  )}`;
 
   return (
     <div
@@ -30,11 +42,11 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-5xl bg-[#FAF8F5] text-[#1C1B1A] rounded-xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-5xl bg-[#FAF8F5] text-[#1C1B1A] rounded-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col border border-[#E7DFD2]">
         {/* Header Bar */}
         <div className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-[#FAF8F5]/95 backdrop-blur border-b border-[#E7DFD2]">
           <div className="flex items-center space-x-3">
-            <span className="px-2.5 py-1 text-[10px] tracking-[0.2em] font-semibold bg-[#1C1B1A] text-[#FAF8F5] rounded">
+            <span className="px-2.5 py-1 text-[10px] tracking-[0.2em] font-mono font-semibold bg-[#1C1B1A] text-[#FAF8F5] rounded">
               {villa.roomNumber}
             </span>
             <h3 className="font-serif text-xl sm:text-2xl font-light tracking-wide text-[#141413]">
@@ -45,7 +57,7 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
           <button
             id="close-villa-modal-btn"
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-black/5 text-[#1C1B1A] transition-colors"
+            className="p-2 rounded-full hover:bg-black/5 text-[#1C1B1A] transition-colors focus:outline-none"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -56,25 +68,25 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
         <div className="overflow-y-auto p-6 sm:p-8 space-y-8 flex-1">
           {/* Gallery View */}
           <div className="space-y-3">
-            <div className="relative aspect-[16/9] w-full rounded-lg overflow-hidden bg-black/5 shadow-inner">
+            <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-black/5 shadow-inner">
               <img
                 src={allImages[activeImageIndex]}
                 alt={`${villa.name} view`}
                 className="w-full h-full object-cover transition-all duration-500"
               />
-              <div className="absolute top-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-md text-[#FAF8F5] text-xs tracking-wider rounded">
-                {villa.pricePerNight} <span className="text-[10px] text-[#D8CCB8]">{t.villas.perNight}</span>
+              <div className="absolute top-4 right-4 px-3.5 py-1.5 bg-black/70 backdrop-blur-md text-[#FAF8F5] text-xs font-serif rounded">
+                {villa.pricePerNight} <span className="text-[10px] text-[#D8CCB8] font-sans">per night</span>
               </div>
             </div>
 
             {/* Thumbnails */}
             {allImages.length > 1 && (
-              <div className="flex items-center space-x-3 overflow-x-auto pb-2">
+              <div className="flex items-center space-x-3 overflow-x-auto pb-2 no-scrollbar">
                 {allImages.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`relative flex-shrink-0 w-20 sm:w-24 aspect-[4/3] rounded overflow-hidden border-2 transition-all ${
+                    className={`relative flex-shrink-0 w-20 sm:w-24 aspect-[4/3] rounded-lg overflow-hidden border-2 transition-all ${
                       activeImageIndex === idx
                         ? 'border-[#B8966C] scale-95 shadow-md'
                         : 'border-transparent opacity-65 hover:opacity-100'
@@ -92,7 +104,7 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
             <div className="flex items-center space-x-2.5">
               <Users className="w-4 h-4 text-[#A07E54]" />
               <div>
-                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.maxGuests}</p>
+                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.maxGuests || 'Capacity'}</p>
                 <p className="font-semibold text-[#141413]">{villa.capacity} Guests</p>
               </div>
             </div>
@@ -100,7 +112,7 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
             <div className="flex items-center space-x-2.5">
               <Bed className="w-4 h-4 text-[#A07E54]" />
               <div>
-                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.bed}</p>
+                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.bed || 'Bed'}</p>
                 <p className="font-semibold text-[#141413] truncate">{villa.bed}</p>
               </div>
             </div>
@@ -108,7 +120,7 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
             <div className="flex items-center space-x-2.5">
               <Bath className="w-4 h-4 text-[#A07E54]" />
               <div>
-                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.bath}</p>
+                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.bath || 'Bathroom'}</p>
                 <p className="font-semibold text-[#141413]">{villa.bathroom}</p>
               </div>
             </div>
@@ -116,7 +128,7 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
             <div className="flex items-center space-x-2.5">
               <Maximize2 className="w-4 h-4 text-[#A07E54]" />
               <div>
-                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.size}</p>
+                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.size || 'Size'}</p>
                 <p className="font-semibold text-[#141413]">{villa.size}</p>
               </div>
             </div>
@@ -124,9 +136,20 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
             <div className="flex items-center space-x-2.5 col-span-2 sm:col-span-1">
               <Eye className="w-4 h-4 text-[#A07E54]" />
               <div>
-                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.view}</p>
+                <p className="text-[10px] uppercase text-[#6B6862] tracking-wider">{t.villas.view || 'View'}</p>
                 <p className="font-semibold text-[#141413] truncate">{villa.view}</p>
               </div>
+            </div>
+          </div>
+
+          {/* Kitchen / Dining Capability */}
+          <div className="p-4 bg-[#F4EFE6] border border-[#E7DFD2] rounded-xl flex items-start space-x-3 text-xs text-[#2C2B28]">
+            <Utensils className="w-4 h-4 text-[#A07E54] flex-shrink-0 mt-0.5" />
+            <div>
+              <strong className="tracking-wider uppercase text-[10px] block text-[#A07E54] mb-0.5">
+                Kitchen & Culinary Service
+              </strong>
+              <span>{kitchenInfo}</span>
             </div>
           </div>
 
@@ -140,7 +163,7 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
             </p>
 
             {villa.architecturalFeature && (
-              <div className="p-4 bg-[#F4EFE6] border-l-2 border-[#B8966C] rounded-r text-xs text-[#2C2B28]">
+              <div className="p-4 bg-[#FAF8F5] border-l-2 border-[#B8966C] rounded-r text-xs text-[#2C2B28] shadow-sm">
                 <strong className="tracking-wider uppercase text-[10px] block text-[#A07E54] mb-1">
                   Architectural Signature
                 </strong>
@@ -152,7 +175,7 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
           {/* Amenities Grid */}
           <div className="space-y-3">
             <h4 className="font-serif text-lg tracking-wide uppercase text-[#141413]">
-              {t.villas.amenities}
+              {t.villas.amenities || 'Sanctuary Amenities'}
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {villa.amenities.map((item, i) => (
@@ -168,31 +191,43 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="sticky bottom-0 z-20 flex items-center justify-between px-6 py-4 bg-[#FAF8F5] border-t border-[#E7DFD2]">
+        <div className="sticky bottom-0 z-20 flex flex-col sm:flex-row items-center justify-between px-6 py-4 bg-[#FAF8F5] border-t border-[#E7DFD2] gap-4">
           <div>
             <span className="text-[10px] tracking-wider uppercase text-[#6B6862] block">
-              Starting Rate
+              Direct Rate
             </span>
             <span className="font-serif text-2xl font-semibold text-[#141413]">
               {villa.pricePerNight}
               <span className="text-xs font-sans text-[#6B6862] ml-1 font-normal">
-                {t.villas.perNight}
+                / night
               </span>
             </span>
           </div>
 
-          <button
-            id="modal-request-booking-btn"
-            onClick={() => {
-              onClose();
-              onRequestBooking(villa.id);
-            }}
-            className="px-6 py-3 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-semibold tracking-[0.18em] uppercase rounded flex items-center space-x-2 transition-all shadow-md active:scale-95"
-          >
-            <Calendar className="w-4 h-4" />
-            <span>{t.villas.requestBooking}</span>
-            <ArrowRight className="w-4 h-4 ml-1" />
-          </button>
+          <div className="flex items-center space-x-3 w-full sm:w-auto">
+            <a
+              href={whatsappInquiryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 sm:flex-initial px-4 py-3 border border-emerald-600/50 hover:bg-emerald-50 text-emerald-800 text-xs font-semibold tracking-wider uppercase rounded flex items-center justify-center space-x-1.5 transition-colors"
+            >
+              <MessageSquare className="w-4 h-4 text-emerald-600" />
+              <span>WhatsApp Inquiry</span>
+            </a>
+
+            <button
+              id="modal-request-booking-btn"
+              onClick={() => {
+                onClose();
+                onRequestBooking(villa.id);
+              }}
+              className="flex-1 sm:flex-initial px-6 py-3 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-semibold tracking-[0.18em] uppercase rounded flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Inquire / Book</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

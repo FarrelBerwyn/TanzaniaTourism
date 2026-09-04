@@ -1,0 +1,192 @@
+import React, { useState } from 'react';
+import { Calendar, CheckSquare, Square, MessageSquare, ArrowRight, Sparkles, MapPin, Clock } from 'lucide-react';
+import { Language } from '../types';
+import { SAMPLE_ITINERARY } from '../data/itinerary';
+
+interface CustomItinerarySectionProps {
+  currentLang: Language;
+  onOpenSupportChat?: (query?: string) => void;
+}
+
+export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
+  currentLang,
+  onOpenSupportChat,
+}) => {
+  // Initialize with all activity IDs selected
+  const allInitialIds = SAMPLE_ITINERARY.flatMap((day) => day.activities.map((a) => a.id));
+  const [selectedIds, setSelectedIds] = useState<string[]>(allInitialIds);
+  const [activeDayIdx, setActiveDayIdx] = useState<number>(0);
+
+  const toggleActivity = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    setSelectedIds(allInitialIds);
+  };
+
+  const handleClearAll = () => {
+    setSelectedIds([]);
+  };
+
+  const activeDay = SAMPLE_ITINERARY[activeDayIdx];
+
+  const handleRequestItinerary = () => {
+    const prompt = `Hello Zanzirangi House Concierge, I have selected ${selectedIds.length} experiences across my custom 8-day Tanzania itinerary (including Day ${activeDay.dayNumber}: ${activeDay.dayTitle}). Could your team help arrange this bespoke journey?`;
+    if (onOpenSupportChat) {
+      onOpenSupportChat(prompt);
+    } else {
+      window.dispatchEvent(new CustomEvent('open-customer-support', { detail: { query: prompt } }));
+    }
+  };
+
+  return (
+    <section id="itinerary" className="py-24 md:py-36 bg-[#FAF8F5] text-[#1C1B1A]">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
+          <div className="inline-flex items-center space-x-2.5 text-[11px] tracking-[0.32em] uppercase text-[#A07E54] font-semibold mb-3">
+            <Calendar className="w-3.5 h-3.5" />
+            <span>Curated Multi-Day Design</span>
+          </div>
+
+          <h2
+            id="itinerary-heading"
+            className="font-serif text-3xl sm:text-5xl md:text-6xl font-light tracking-[0.04em] uppercase text-[#141413] mb-4"
+          >
+            BUILD YOUR TANZANIA JOURNEY
+          </h2>
+
+          <p className="font-serif italic text-xl sm:text-2xl text-[#8E6B40] font-light mb-4">
+            An interconnected journey from barefoot ocean sanctuary to the wild Serengeti.
+          </p>
+
+          <p className="text-sm md:text-base text-[#6B6862] leading-relaxed max-w-2xl mx-auto">
+            Select your preferred experiences below to customize a seamless East African journey. When ready, request your bespoke schedule directly through our concierge team.
+          </p>
+        </div>
+
+        {/* Day Selector Navigation Tabs */}
+        <div className="flex items-center justify-start md:justify-center space-x-2 sm:space-x-3 overflow-x-auto pb-4 mb-10 no-scrollbar">
+          {SAMPLE_ITINERARY.map((day, idx) => (
+            <button
+              key={day.dayNumber}
+              onClick={() => setActiveDayIdx(idx)}
+              className={`px-5 py-3 rounded-xl transition-all duration-300 flex flex-col items-center flex-shrink-0 text-left md:text-center ${
+                activeDayIdx === idx
+                  ? 'bg-[#1C1B1A] text-[#FAF8F5] shadow-xl'
+                  : 'bg-[#F4EFE6] text-[#6B6862] hover:bg-[#E7DFD2]'
+              }`}
+            >
+              <span className="text-[11px] font-mono tracking-widest font-semibold uppercase block">
+                {day.dayNumber}
+              </span>
+              <span className="font-serif text-sm truncate max-w-[140px] block mt-0.5">
+                {day.dayTitle.split(' ')[0]}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Active Day Content Box */}
+        <div className="bg-[#F4EFE6] border border-[#E7DFD2] rounded-3xl p-6 sm:p-10 mb-12 shadow-md">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-[#E7DFD2] gap-3">
+            <div>
+              <span className="text-xs font-mono tracking-widest text-[#A07E54] uppercase block">
+                {activeDay.dayNumber} • {activeDay.location}
+              </span>
+              <h3 className="font-serif text-2xl sm:text-3xl text-[#141413] font-light mt-1">
+                {activeDay.dayTitle}
+              </h3>
+            </div>
+
+            <div className="flex items-center space-x-3 text-xs font-mono">
+              <button
+                onClick={handleSelectAll}
+                className="text-[#A07E54] hover:underline"
+              >
+                Select All
+              </button>
+              <span>•</span>
+              <button
+                onClick={handleClearAll}
+                className="text-[#6B6862] hover:underline"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+
+          {/* Activities Checklist */}
+          <div className="space-y-4">
+            {activeDay.activities.map((act) => {
+              const isChecked = selectedIds.includes(act.id);
+              return (
+                <div
+                  key={act.id}
+                  onClick={() => toggleActivity(act.id)}
+                  className={`p-5 rounded-2xl border transition-all duration-200 cursor-pointer flex items-start space-x-4 ${
+                    isChecked
+                      ? 'bg-[#FAF8F5] border-[#B8966C] shadow-sm'
+                      : 'bg-white/40 border-transparent hover:bg-white/70'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    className="mt-1 text-[#A07E54] flex-shrink-0 focus:outline-none"
+                    aria-label={`Toggle ${act.title}`}
+                  >
+                    {isChecked ? (
+                      <CheckSquare className="w-5 h-5 fill-[#B8966C] text-[#FAF8F5]" />
+                    ) : (
+                      <Square className="w-5 h-5 text-[#8E6B40]/40" />
+                    )}
+                  </button>
+
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 text-[11px] font-mono text-[#A07E54] mb-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{act.time}</span>
+                    </div>
+                    <h4 className="font-serif text-lg text-[#141413] mb-1 font-normal">
+                      {act.title}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-[#55524B] leading-relaxed">
+                      {act.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bottom Itinerary Request Banner */}
+        <div className="bg-[#1C1B1A] text-[#FAF8F5] rounded-3xl p-8 sm:p-12 border border-[#2C2B28] shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="max-w-xl space-y-2 text-center md:text-left">
+            <div className="inline-flex items-center space-x-2 text-[10px] font-mono tracking-widest uppercase text-[#C4A27A]">
+              <Sparkles className="w-3 h-3" />
+              <span>{selectedIds.length} Experiences Selected Across 8 Days</span>
+            </div>
+            <h3 className="font-serif text-2xl sm:text-3xl text-[#FAF8F5] font-light">
+              Create Your Complete Tanzania Journey
+            </h3>
+            <p className="text-xs sm:text-sm text-[#D8CCB8]">
+              Send your tailored itinerary directly to the Zanzirangi House customer support and concierge team. We will confirm dates, chartered flights, villa choices, and private guide reservations.
+            </p>
+          </div>
+
+          <button
+            onClick={handleRequestItinerary}
+            className="w-full md:w-auto px-9 py-4 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-bold tracking-[0.2em] uppercase rounded-full flex items-center justify-center space-x-2.5 transition-all shadow-xl active:scale-95 flex-shrink-0 cursor-pointer"
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>REQUEST THIS ITINERARY</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};

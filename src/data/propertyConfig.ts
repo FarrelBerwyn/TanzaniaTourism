@@ -7,8 +7,8 @@ import { PropertyConfig } from '../types';
  */
 export const PROPERTY_CONFIG: PropertyConfig = {
   name: 'Zanzirangi House',
-  tagline: 'YOUR PRIVATE ESCAPE IN TANZANIA',
-  subTagline: 'Experience comfort, nature and authentic hospitality in one exceptional destination.',
+  tagline: 'YOUR PRIVATE GATEWAY TO ZANZIBAR',
+  subTagline: 'Stay, explore and experience the island — with Tanzania beyond.',
   destination: 'Zanzibar, Tanzania',
   address: 'Kizimkazi Dimbani, South Coast',
   city: 'Zanzibar',

@@ -13,6 +13,7 @@ interface BookingModalProps {
   initialGuests?: number;
   currentLang: Language;
   onClose: () => void;
+  onOpenSupportChat?: (query?: string) => void;
 }
 
 export const BookingModal: React.FC<BookingModalProps> = ({
@@ -23,6 +24,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   initialGuests,
   currentLang,
   onClose,
+  onOpenSupportChat,
 }) => {
   if (!isOpen) return null;
 
@@ -60,13 +62,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       setIsSubmitting(false);
       setIsSuccess(true);
     }, 1000);
-  };
-
-  const generateWhatsAppUrl = () => {
-    const message = encodeURIComponent(
-      `Jambo ${PROPERTY_CONFIG.name} Concierge,\n\nI would like to request a reservation for:\n• Villa: ${chosenVilla.name} (${chosenVilla.roomNumber})\n• Dates: ${checkIn} to ${checkOut}\n• Guests: ${guests}\n• Name: ${fullName || 'Guest'}\n• Airport Transfer: ${airportTransfer ? 'Yes' : 'No'}\n\nPlease confirm availability and bespoke rates.`
-    );
-    return `https://wa.me/${PROPERTY_CONFIG.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${message}`;
   };
 
   return (
@@ -131,15 +126,22 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <a
-                  href={generateWhatsAppUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold tracking-wider uppercase rounded flex items-center justify-center space-x-2 transition-all shadow"
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    const prompt = `Hello Zanzirangi Customer Support, I just submitted a reservation inquiry for ${chosenVilla.name} (${checkIn} to ${checkOut}, ${guests} guests). Could you please check availability and details?`;
+                    if (onOpenSupportChat) {
+                      onOpenSupportChat(prompt);
+                    } else {
+                      window.dispatchEvent(new CustomEvent('open-customer-support', { detail: { query: prompt } }));
+                    }
+                  }}
+                  className="w-full sm:w-auto px-6 py-3 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-bold tracking-wider uppercase rounded flex items-center justify-center space-x-2 transition-all shadow cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>{t.bookingModal.chatViaWhatsapp}</span>
-                </a>
+                  <span>Chat with Customer Support</span>
+                </button>
 
                 <button
                   onClick={onClose}

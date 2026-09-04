@@ -4,11 +4,15 @@ export interface TranslationDictionary {
   nav: {
     stay: string;
     experiences: string;
-    facilities: string;
+    facilities?: string;
     dining: string;
+    explore?: string;
+    concierge?: string;
+    about?: string;
     gallery: string;
     location: string;
     bookStay: string;
+    planStay?: string;
     cmsPitch: string;
   };
   hero: {
@@ -167,21 +171,25 @@ export interface TranslationDictionary {
 export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
   en: {
     nav: {
-      stay: 'Stay',
-      experiences: 'Experiences',
+      stay: 'STAY',
+      experiences: 'EXPERIENCES',
       facilities: 'Facilities',
-      dining: 'Dining',
+      dining: 'DINING',
+      explore: 'EXPLORE',
+      concierge: 'CONCIERGE',
+      about: 'ABOUT',
       gallery: 'Gallery',
       location: 'Location',
-      bookStay: 'Book Your Stay',
+      bookStay: 'PLAN YOUR STAY',
+      planStay: 'PLAN YOUR STAY',
       cmsPitch: 'Client CMS Preview',
     },
     hero: {
-      eyebrow: 'Zanzibar • Tanzania',
-      title: 'YOUR PRIVATE ESCAPE IN TANZANIA',
-      subtitle: 'Experience comfort, nature and authentic hospitality in one exceptional destination.',
-      exploreProperty: 'EXPLORE THE PROPERTY',
-      bookYourStay: 'BOOK YOUR STAY',
+      eyebrow: 'ZANZIBAR, TANZANIA',
+      title: 'YOUR PRIVATE GATEWAY TO ZANZIBAR',
+      subtitle: 'Stay, explore and experience the island — with Tanzania beyond.',
+      exploreProperty: 'EXPLORE THE RETREAT',
+      bookYourStay: 'PLAN YOUR JOURNEY',
       scrollIndicator: 'SCROLL TO DISCOVER',
     },
     quickBooking: {
@@ -195,13 +203,13 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       guestsCount: 'Guests',
     },
     intro: {
-      heading: 'A PLACE TO SLOW DOWN',
-      subhead: 'Where Untamed Nature Meets Modern Sanctuary',
-      body: 'A carefully designed private retreat where modern comfort meets the beauty and character of Tanzania. Sheltered along the serene southern coastline of Zanzibar, each villa is an architectural homage to Swahili coastal heritage, crafted with natural coral ragstone, warm timber, and expansive terraces that open directly to the gentle rhythm of the Indian Ocean.',
+      heading: 'MORE THAN A STAY',
+      subhead: 'Discover a private retreat where the beauty of Zanzibar meets the warmth of authentic island hospitality.',
+      body: 'A carefully designed private sanctuary where modern luxury meets the timeless soul of Zanzibar. Sheltered along the peaceful southern coastline of Kizimkazi, Zanzirangi House offers an intimate gateway to barefoot oceanfront living, fresh garden gastronomy, curated island adventures, and seamless connections to mainland Tanzania safaris.',
       statsVillas: 'PRIVATE VILLAS',
       statsPool: 'SWIMMING POOL',
       statsDining: 'DINING & BAR',
-      statsSupport: 'GUEST SUPPORT',
+      statsSupport: 'GUEST CONCIERGE',
     },
     villas: {
       heading: 'STAY YOUR WAY',

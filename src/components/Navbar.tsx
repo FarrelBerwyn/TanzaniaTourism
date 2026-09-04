@@ -37,12 +37,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   const navLinks = [
-    { label: t.nav.stay, href: '#stay' },
-    { label: t.nav.experiences, href: '#experiences' },
-    { label: t.nav.facilities, href: '#facilities' },
-    { label: t.nav.dining, href: '#dining' },
-    { label: t.nav.gallery, href: '#gallery' },
-    { label: t.nav.location, href: '#location' },
+    { label: t.nav.stay || 'STAY', href: '#stay' },
+    { label: t.nav.experiences || 'EXPERIENCES', href: '#experiences' },
+    { label: t.nav.dining || 'DINING', href: '#dining' },
+    { label: t.nav.explore || 'EXPLORE', href: '#explore' },
+    { label: t.nav.concierge || 'CONCIERGE', href: '#concierge' },
+    { label: t.nav.about || 'ABOUT', href: '#about' },
   ];
 
   const languages: { code: Language; label: string; flag: string }[] = [
@@ -61,8 +61,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         id="main-navigation"
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? 'bg-[#141413]/90 backdrop-blur-md border-b border-[#2C2B28]/60 py-3.5 shadow-lg'
-            : 'bg-gradient-to-b from-black/70 via-black/30 to-transparent py-5'
+            ? 'bg-[#141413]/95 backdrop-blur-md border-b border-[#2C2B28]/80 py-2.5 shadow-2xl'
+            : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent py-4 sm:py-5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between">
@@ -75,9 +75,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             <img
               src={logoImg}
               alt="Zanzirangi House Logo"
-              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full object-cover border border-[#C4A27A]/50 shadow-md group-hover:scale-105 group-hover:border-[#C4A27A] transition-all duration-300 flex-shrink-0"
+              className={`${
+                isScrolled ? 'w-8 h-8 sm:w-9 sm:h-9' : 'w-9 h-9 sm:w-11 sm:h-11'
+              } rounded-full object-cover border border-[#C4A27A]/50 shadow-md group-hover:scale-105 group-hover:border-[#C4A27A] transition-all duration-300 flex-shrink-0`}
             />
-            <span className="font-serif text-xl sm:text-2xl md:text-[26px] tracking-[0.18em] text-[#FAF8F5] uppercase transition-colors duration-300 group-hover:text-[#C4A27A]">
+            <span
+              className={`font-serif tracking-[0.18em] text-[#FAF8F5] uppercase transition-all duration-300 group-hover:text-[#C4A27A] ${
+                isScrolled ? 'text-lg sm:text-xl md:text-2xl' : 'text-xl sm:text-2xl md:text-[26px]'
+              }`}
+            >
               {PROPERTY_CONFIG.name}
             </span>
           </a>
@@ -85,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Desktop Navigation Links */}
           <nav
             id="desktop-nav-links"
-            className="hidden lg:flex items-center space-x-7 xl:space-x-9 text-[13px] tracking-[0.18em] uppercase font-medium text-[#FAF8F5]/90"
+            className="hidden lg:flex items-center space-x-7 xl:space-x-8 text-[12px] xl:text-[13px] tracking-[0.2em] uppercase font-medium text-[#FAF8F5]/90"
           >
             {navLinks.map((link) => (
               <a
@@ -141,14 +147,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* Book Now Button */}
+            {/* Plan Your Stay Button */}
             <button
               id="header-book-button"
               onClick={() => onOpenBooking()}
-              className="flex items-center space-x-2 px-5 py-2.5 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs tracking-[0.16em] uppercase font-medium rounded transition-all duration-300 shadow-md hover:shadow-lg transform active:scale-95"
+              className="flex items-center space-x-2 px-5 py-2.5 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs tracking-[0.18em] uppercase font-semibold rounded transition-all duration-300 shadow-md hover:shadow-lg transform active:scale-95"
             >
               <Calendar className="w-3.5 h-3.5" />
-              <span>{t.nav.bookStay}</span>
+              <span>{t.nav.planStay || t.nav.bookStay || 'PLAN YOUR STAY'}</span>
             </button>
           </div>
 
@@ -157,9 +163,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               id="mobile-book-icon-button"
               onClick={() => onOpenBooking()}
-              className="px-3 py-1.5 bg-[#B8966C] text-[#141413] text-[11px] font-medium tracking-widest uppercase rounded"
+              className="px-3 py-1.5 bg-[#B8966C] text-[#141413] text-[10px] font-semibold tracking-widest uppercase rounded"
             >
-              {t.nav.bookStay}
+              {t.nav.planStay || t.nav.bookStay || 'PLAN'}
             </button>
 
             <button
@@ -227,9 +233,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 onOpenBooking();
               }}
-              className="w-full py-3.5 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-sm tracking-[0.2em] uppercase font-semibold rounded text-center"
+              className="w-full py-3.5 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-sm tracking-[0.2em] uppercase font-semibold rounded text-center shadow-lg"
             >
-              {t.nav.bookStay}
+              {t.nav.planStay || t.nav.bookStay || 'PLAN YOUR STAY'}
             </button>
           </div>
         </div>

@@ -15,15 +15,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ currentLang }) =
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
 
   const categories: { id: GalleryCategory | 'all'; label: string }[] = [
-    { id: 'all', label: t.gallery.all },
-    { id: 'villas', label: t.gallery.villas },
-    { id: 'rooms', label: t.gallery.rooms },
-    { id: 'pool', label: t.gallery.pool },
-    { id: 'dining', label: t.gallery.dining },
-    { id: 'food', label: t.gallery.food },
-    { id: 'beach', label: t.gallery.beach },
-    { id: 'facilities', label: t.gallery.facilities },
-    { id: 'experiences', label: t.gallery.experiences },
+    { id: 'all', label: 'All Photographs' },
+    { id: 'property', label: 'Property' },
+    { id: 'villas', label: 'Villas' },
+    { id: 'dining', label: 'Dining' },
+    { id: 'pool', label: 'Pool' },
+    { id: 'garden', label: 'Garden' },
+    { id: 'zanzibar', label: 'Zanzibar' },
+    { id: 'experiences', label: 'Experiences' },
   ];
 
   const filteredItems =
