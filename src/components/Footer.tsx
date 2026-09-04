@@ -1,8 +1,14 @@
 import React from 'react';
-import { Globe, ArrowUp, Instagram, Facebook, Settings, MessageSquare, Phone, Mail, MapPin, Calendar } from 'lucide-react';
+import { Globe, ArrowUp, Instagram, Facebook, Youtube, Settings, MessageSquare, Phone, Mail, MapPin, Calendar } from 'lucide-react';
 import { Language } from '../types';
 import { PROPERTY_CONFIG } from '../data/propertyConfig';
 import { TRANSLATIONS } from '../data/translations';
+
+const TikTokIcon: React.FC<{ className?: string }> = ({ className = 'w-3.5 h-3.5' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.47 6.27 6.27 0 0 0 1.95-4.47V8.58a8.27 8.27 0 0 0 4.82 1.55V6.69z" />
+  </svg>
+);
 
 interface FooterProps {
   currentLang: Language;
@@ -37,6 +43,7 @@ export const Footer: React.FC<FooterProps> = ({
 
   const languages: { code: Language; label: string }[] = [
     { code: 'en', label: 'English' },
+    { code: 'pl', label: 'Polski' },
     { code: 'ar', label: 'العربية' },
     { code: 'zh', label: '中文' },
     { code: 'fr', label: 'Français' },
@@ -167,13 +174,17 @@ export const Footer: React.FC<FooterProps> = ({
               ))}
             </div>
 
-            <div className="pt-2 flex items-center space-x-3">
+            <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#A07E54] block pt-2">
+              Social Media
+            </span>
+            <div className="pt-1 flex items-center space-x-2.5">
               <a
                 href={PROPERTY_CONFIG.socials.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#FAF8F5] hover:border-[#C4A27A] hover:text-[#C4A27A] transition-colors"
                 aria-label="Instagram"
+                title="Follow us on Instagram"
               >
                 <Instagram className="w-3.5 h-3.5" />
               </a>
@@ -183,8 +194,29 @@ export const Footer: React.FC<FooterProps> = ({
                 rel="noopener noreferrer"
                 className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#FAF8F5] hover:border-[#C4A27A] hover:text-[#C4A27A] transition-colors"
                 aria-label="Facebook"
+                title="Follow us on Facebook"
               >
                 <Facebook className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href={PROPERTY_CONFIG.socials.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#FAF8F5] hover:border-[#C4A27A] hover:text-[#C4A27A] transition-colors"
+                aria-label="TikTok"
+                title="Watch our videos on TikTok"
+              >
+                <TikTokIcon className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href={PROPERTY_CONFIG.socials.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#FAF8F5] hover:border-[#C4A27A] hover:text-[#C4A27A] transition-colors"
+                aria-label="YouTube"
+                title="Subscribe to our YouTube channel"
+              >
+                <Youtube className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>

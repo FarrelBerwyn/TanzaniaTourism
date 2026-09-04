@@ -1,4 +1,4 @@
-export type Language = 'en' | 'fr' | 'sw' | 'es' | 'it' | 'ar' | 'zh';
+export type Language = 'en' | 'fr' | 'sw' | 'es' | 'it' | 'ar' | 'zh' | 'pl';
 
 export type GalleryCategory = 'property' | 'villas' | 'dining' | 'pool' | 'garden' | 'zanzibar' | 'experiences';
 
@@ -35,11 +35,15 @@ export interface PropertyConfig {
   socials: {
     instagram: string;
     facebook: string;
+    tiktok: string;
+    youtube: string;
     tripadvisor: string;
   };
   social?: {
     instagram: string;
     facebook: string;
+    tiktok?: string;
+    youtube?: string;
     tripadvisor: string;
   };
 }

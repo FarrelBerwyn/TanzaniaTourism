@@ -36,13 +36,17 @@ export const PROPERTY_CONFIG: PropertyConfig = {
     supportText: '24/7 Butler & Concierge Support',
   },
   socials: {
-    instagram: 'https://instagram.com',
-    facebook: 'https://facebook.com',
+    instagram: 'https://www.instagram.com/zanzirangihouse',
+    facebook: 'https://www.facebook.com/p/Zanzirangi-House-61576133951151/',
+    tiktok: 'https://www.tiktok.com/@zanzirangihouse',
+    youtube: 'https://www.youtube.com/@zanzirangihouse',
     tripadvisor: 'https://tripadvisor.com',
   },
   social: {
-    instagram: 'https://instagram.com',
-    facebook: 'https://facebook.com',
+    instagram: 'https://www.instagram.com/zanzirangihouse',
+    facebook: 'https://www.facebook.com/p/Zanzirangi-House-61576133951151/',
+    tiktok: 'https://www.tiktok.com/@zanzirangihouse',
+    youtube: 'https://www.youtube.com/@zanzirangihouse',
     tripadvisor: 'https://tripadvisor.com',
   },
 };

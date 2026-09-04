@@ -34,6 +34,14 @@ export const GALLERY_DATA: GalleryItem[] = [
 
   // VILLAS
   {
+    id: 'g-vil-real',
+    title: 'Zanzirangi Villa Access Pathway',
+    category: 'villas',
+    image: './zanzirangi-villas.jpg',
+    aspect: 'portrait',
+    caption: 'Atmospheric evening stone pathway winding to private thatched Makuti villas amidst illuminated tropical palms.',
+  },
+  {
     id: 'g-vil-01',
     title: 'Sultan Oceanfront Villa Sun Deck',
     category: 'villas',
@@ -103,6 +111,14 @@ export const GALLERY_DATA: GalleryItem[] = [
   },
 
   // GARDEN
+  {
+    id: 'g-gar-real',
+    title: 'Illuminated Night Garden Pathway',
+    category: 'garden',
+    image: './zanzirangi-villas.jpg',
+    aspect: 'portrait',
+    caption: 'Lit stone walkway bordered by banana palms and indigenous frangipani leading to garden villas.',
+  },
   {
     id: 'g-gar-01',
     title: 'From Our Garden Organic Produce & Herbs',

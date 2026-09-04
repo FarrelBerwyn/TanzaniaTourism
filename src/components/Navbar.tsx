@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Globe, Calendar } from 'lucide-react';
+import { Menu, X, Globe, Calendar, Instagram, Facebook, Youtube } from 'lucide-react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { PROPERTY_CONFIG } from '../data/propertyConfig';
 import logoImg from './zanzirangi-house-logo.jpg';
+
+const TikTokIcon: React.FC<{ className?: string }> = ({ className = 'w-3.5 h-3.5' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.47 6.27 6.27 0 0 0 1.95-4.47V8.58a8.27 8.27 0 0 0 4.82 1.55V6.69z" />
+  </svg>
+);
 
 interface NavbarProps {
   currentLang: Language;
@@ -47,6 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const languages: { code: Language; label: string; flag: string }[] = [
     { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'pl', label: 'Polski', flag: '🇵🇱' },
     { code: 'ar', label: 'العربية', flag: '🇦🇪' },
     { code: 'zh', label: '中文 (Chinese)', flag: '🇨🇳' },
     { code: 'fr', label: 'Français', flag: '🇫🇷' },
@@ -105,7 +112,51 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right Action Items */}
-          <div className="hidden lg:flex items-center space-x-5">
+          <div className="hidden lg:flex items-center space-x-4 xl:space-x-5">
+            {/* Social Media Links for Tourists */}
+            <div className="flex items-center space-x-2 text-[#FAF8F5]/70 border-r border-[#FAF8F5]/15 pr-3">
+              <a
+                href={PROPERTY_CONFIG.socials.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1 hover:text-[#C4A27A] transition-colors"
+                title="Instagram"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href={PROPERTY_CONFIG.socials.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1 hover:text-[#C4A27A] transition-colors"
+                title="Facebook: Zanzirangi House"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href={PROPERTY_CONFIG.socials.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1 hover:text-[#C4A27A] transition-colors"
+                title="TikTok: @zanzirangihouse"
+                aria-label="TikTok"
+              >
+                <TikTokIcon className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href={PROPERTY_CONFIG.socials.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1 hover:text-[#C4A27A] transition-colors"
+                title="YouTube: Zanzirangi House"
+                aria-label="YouTube"
+              >
+                <Youtube className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
             {/* Language Selector */}
             <div className="relative">
               <button
@@ -121,7 +172,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {langDropdownOpen && (
                 <div
                   id="language-dropdown-menu"
-                  className="absolute right-0 mt-2 w-40 bg-[#1C1B1A] border border-[#2C2B28] rounded shadow-xl py-2 z-50 text-xs tracking-wider"
+                  className="absolute right-0 mt-2 w-44 bg-[#1C1B1A] border border-[#2C2B28] rounded shadow-xl py-2 z-50 text-xs tracking-wider max-h-80 overflow-y-auto"
                 >
                   {languages.map((l) => (
                     <button
@@ -184,7 +235,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {mobileMenuOpen && (
         <div
           id="mobile-navigation-overlay"
-          className="fixed inset-0 bg-[#141413]/98 z-40 lg:hidden flex flex-col justify-between pt-24 pb-12 px-8 backdrop-blur-xl animate-fadeIn"
+          className="fixed inset-0 bg-[#141413]/98 z-40 lg:hidden flex flex-col justify-between pt-24 pb-12 px-8 backdrop-blur-xl animate-fadeIn overflow-y-auto"
         >
           <div className="flex flex-col space-y-6 text-center">
             <div className="flex items-center justify-center space-x-3 mb-4">
@@ -210,9 +261,53 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </div>
 
-          <div className="flex flex-col items-center space-y-6">
+          <div className="flex flex-col items-center space-y-6 mt-8">
+            {/* Mobile Social Links */}
+            <div className="flex items-center justify-center space-x-4 text-[#FAF8F5]/80">
+              <a
+                href={PROPERTY_CONFIG.socials.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 bg-white/5 rounded-full hover:text-[#C4A27A] hover:bg-white/10 transition-colors"
+                title="Instagram"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href={PROPERTY_CONFIG.socials.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 bg-white/5 rounded-full hover:text-[#C4A27A] hover:bg-white/10 transition-colors"
+                title="Facebook"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
+              <a
+                href={PROPERTY_CONFIG.socials.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 bg-white/5 rounded-full hover:text-[#C4A27A] hover:bg-white/10 transition-colors"
+                title="TikTok"
+                aria-label="TikTok"
+              >
+                <TikTokIcon className="w-4 h-4" />
+              </a>
+              <a
+                href={PROPERTY_CONFIG.socials.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 bg-white/5 rounded-full hover:text-[#C4A27A] hover:bg-white/10 transition-colors"
+                title="YouTube"
+                aria-label="YouTube"
+              >
+                <Youtube className="w-4 h-4" />
+              </a>
+            </div>
+
             {/* Language Selector in Mobile */}
-            <div className="flex items-center justify-center space-x-3 text-xs tracking-widest">
+            <div className="flex flex-wrap items-center justify-center gap-2 text-xs tracking-widest max-w-xs">
               {languages.map((l) => (
                 <button
                   key={l.code}
@@ -220,10 +315,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className={`px-2.5 py-1 rounded transition-colors ${
                     currentLang === l.code
                       ? 'bg-[#B8966C] text-[#141413] font-semibold'
-                      : 'text-[#FAF8F5]/70 hover:text-white'
+                      : 'text-[#FAF8F5]/70 bg-white/5 hover:text-white'
                   }`}
                 >
-                  {l.code.toUpperCase()}
+                  {l.flag} {l.code.toUpperCase()}
                 </button>
               ))}
             </div>
@@ -243,3 +338,4 @@ export const Navbar: React.FC<NavbarProps> = ({
     </>
   );
 };
+

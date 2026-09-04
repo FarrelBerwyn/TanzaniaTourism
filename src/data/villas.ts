@@ -57,8 +57,9 @@ export const VILLAS_DATA: Villa[] = [
     architecturalFeature: 'Traditional artisanal thatched makuti roof with natural cross-ventilation',
     shortDescription: 'Tucked within fragrant frangipani and coconut palms, offering total seclusion, an open-air stone shower, and serene garden verandah.',
     description: 'Immersed in indigenous tropical gardens, Villa 02 offers complete tranquility and privacy. Constructed using sustainably harvested timber, coconut palm thatch, and local coral ragstone, the villa remains naturally cool under the equatorial sun. Enjoy lazy afternoons reading on the daybed surrounded by birdsong, or indulge in an open-air rainwater shower under the canopy of night stars.',
-    heroImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1400&q=85',
+    heroImage: './zanzirangi-villas.jpg',
     images: [
+      './zanzirangi-villas.jpg',
       'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1400&q=85',
       'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=85',
