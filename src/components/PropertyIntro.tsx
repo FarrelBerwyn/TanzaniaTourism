@@ -41,7 +41,7 @@ export const PropertyIntro: React.FC<PropertyIntroProps> = ({ currentLang }) => 
               {/* CLIENT_PROPERTY_IMAGES: Placeholder property exterior / sunset architecture */}
               <img
                 src="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1400&q=85"
-                alt="The Zanzibar Retreat oceanfront architecture"
+                alt="Zanzirangi House oceanfront architecture"
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 loading="lazy"
               />

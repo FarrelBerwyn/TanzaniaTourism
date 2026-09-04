@@ -245,7 +245,7 @@ export const VILLAS_DATA: Villa[] = [
     availability: true,
     featured: true,
     architecturalFeature: 'Private infinity pool, chef prep kitchen, private dhow jetty, and dedicated 24-hour butler team',
-    shortDescription: 'The flagship residence of The Zanzibar Retreat. Unparalleled oceanfront grandeur, multi-level infinity pools, and discrete private hosting.',
+    shortDescription: 'The flagship residence of Zanzirangi House. Unparalleled oceanfront grandeur, multi-level infinity pools, and discrete private hosting.',
     description: 'The estate’s most exclusive address. Set on its own secluded promontory, The Royal Presidential Villa offers total autonomy, expansive entertaining salons, a private oceanfront infinity pool suspended over the coral lagoon, a private chef service on request, and direct private beach access.',
     heroImage: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1600&q=85',
     images: [

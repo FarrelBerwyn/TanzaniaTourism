@@ -348,7 +348,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
         {/* Modal Footer */}
         <div className="px-6 py-4 border-t border-[#2C2B28] bg-[#141413] flex items-center justify-between text-xs text-[#6B6862]">
-          <span>The Zanzibar Retreat Platform v1.0 • Pitching Demo Build</span>
+          <span>Zanzirangi House Platform v1.0 • Pitching Demo Build</span>
           <button
             onClick={onClose}
             className="px-4 py-2 bg-white/10 hover:bg-white/20 text-[#FAF8F5] rounded text-xs uppercase tracking-wider font-medium"

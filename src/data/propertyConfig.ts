@@ -6,7 +6,7 @@ import { PropertyConfig } from '../types';
  * are centralized here for seamless client onboarding and CMS integration.
  */
 export const PROPERTY_CONFIG: PropertyConfig = {
-  name: 'The Zanzibar Retreat',
+  name: 'Zanzirangi House',
   tagline: 'YOUR PRIVATE ESCAPE IN TANZANIA',
   subTagline: 'Experience comfort, nature and authentic hospitality in one exceptional destination.',
   destination: 'Zanzibar, Tanzania',
@@ -22,11 +22,11 @@ export const PROPERTY_CONFIG: PropertyConfig = {
   phone: '+255 777 890 123',
   displayPhone: '+255 (0) 777 890 123',
   whatsappNumber: '255777890123',
-  whatsappMessage: 'Hello, I would like to inquire about availability and rates at The Zanzibar Retreat.',
-  email: 'concierge@zanzibarretreat.com',
+  whatsappMessage: 'Hello, I would like to inquire about availability and rates at Zanzirangi House.',
+  email: 'concierge@zanzirangihouse.com',
   contact: {
     phone: '+255 777 890 123',
-    email: 'concierge@zanzibarretreat.com',
+    email: 'concierge@zanzirangihouse.com',
     whatsapp: '+255 777 890 123',
   },
   stats: {

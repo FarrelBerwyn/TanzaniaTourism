@@ -4,7 +4,7 @@ import { PROPERTY_CONFIG } from '../data/propertyConfig';
 
 export const WhatsAppButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState('Jambo! I would like to inquire about staying at The Zanzibar Retreat.');
+  const [message, setMessage] = useState('Jambo! I would like to inquire about staying at Zanzirangi House.');
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();

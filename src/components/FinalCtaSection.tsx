@@ -27,7 +27,7 @@ export const FinalCtaSection: React.FC<FinalCtaSectionProps> = ({
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=2400&q=85"
-          alt="Luxury Zanzibar retreat at dusk"
+          alt="Zanzirangi House at dusk"
           className="w-full h-full object-cover opacity-25 filter brightness-75 scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#141413] via-[#141413]/80 to-[#141413]" />
