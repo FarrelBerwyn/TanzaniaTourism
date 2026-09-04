@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Settings, Database, Image, Calendar, Check, Save, Shield, Globe } from 'lucide-react';
 import { Villa } from '../types';
 import { PROPERTY_CONFIG } from '../data/propertyConfig';
+import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface CmsAdminModalProps {
   isOpen: boolean;
@@ -63,11 +64,17 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
           </button>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex items-center space-x-2 px-6 py-2.5 bg-[#181716] border-b border-[#2C2B28] overflow-x-auto text-xs font-mono tracking-wider uppercase">
+        {/* Tab Navigation with Dynamic Left & Right Gradient Fade */}
+        <ScrollFadeContainer
+          className="relative max-w-full overflow-hidden bg-[#181716] border-b border-[#2C2B28]"
+          scrollClassName="flex items-center space-x-2 px-6 py-2.5 overflow-x-auto pr-14 no-scrollbar scroll-smooth text-xs font-mono tracking-wider uppercase"
+          leftGradientClass="bg-gradient-to-r from-[#181716] via-[#181716]/90 to-transparent"
+          rightGradientClass="bg-gradient-to-l from-[#181716] via-[#181716]/90 to-transparent"
+          fadeWidth="w-10 sm:w-14"
+        >
           <button
             onClick={() => setActiveTab('villas')}
-            className={`px-3 py-1.5 rounded flex items-center space-x-1.5 transition-colors ${
+            className={`flex-shrink-0 whitespace-nowrap px-3 py-1.5 rounded flex items-center space-x-1.5 transition-colors ${
               activeTab === 'villas'
                 ? 'bg-[#B8966C] text-[#141413] font-semibold'
                 : 'text-[#D8CCB8]/70 hover:text-white'
@@ -79,7 +86,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
           <button
             onClick={() => setActiveTab('property')}
-            className={`px-3 py-1.5 rounded flex items-center space-x-1.5 transition-colors ${
+            className={`flex-shrink-0 whitespace-nowrap px-3 py-1.5 rounded flex items-center space-x-1.5 transition-colors ${
               activeTab === 'property'
                 ? 'bg-[#B8966C] text-[#141413] font-semibold'
                 : 'text-[#D8CCB8]/70 hover:text-white'
@@ -91,7 +98,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
           <button
             onClick={() => setActiveTab('media')}
-            className={`px-3 py-1.5 rounded flex items-center space-x-1.5 transition-colors ${
+            className={`flex-shrink-0 whitespace-nowrap px-3 py-1.5 rounded flex items-center space-x-1.5 transition-colors ${
               activeTab === 'media'
                 ? 'bg-[#B8966C] text-[#141413] font-semibold'
                 : 'text-[#D8CCB8]/70 hover:text-white'
@@ -103,7 +110,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
           <button
             onClick={() => setActiveTab('inquiries')}
-            className={`px-3 py-1.5 rounded flex items-center space-x-1.5 transition-colors ${
+            className={`flex-shrink-0 whitespace-nowrap px-3 py-1.5 rounded flex items-center space-x-1.5 transition-colors ${
               activeTab === 'inquiries'
                 ? 'bg-[#B8966C] text-[#141413] font-semibold'
                 : 'text-[#D8CCB8]/70 hover:text-white'
@@ -112,7 +119,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
             <Calendar className="w-3.5 h-3.5" />
             <span>Inquiries Queue (3)</span>
           </button>
-        </div>
+        </ScrollFadeContainer>
 
         {/* Tab Content */}
         <div className="p-6 overflow-y-auto flex-1 text-xs space-y-6">

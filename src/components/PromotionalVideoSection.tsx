@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Pause, Film, Volume2, VolumeX, Sparkles, X, Info } from 'lucide-react';
+import { Play, Pause, Film, Volume2, VolumeX, Sparkles, X } from 'lucide-react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 
@@ -63,10 +63,10 @@ export const PromotionalVideoSection: React.FC<PromotionalVideoSectionProps> = (
   const currentScene = storylineScenes[activeSceneIndex];
 
   return (
-    <section id="film" className="relative w-full py-24 md:py-32 bg-[#141413] text-[#FAF8F5] overflow-hidden">
+    <section id="film" className="relative w-full pt-14 sm:pt-20 md:pt-28 pb-8 sm:pb-12 bg-[#141413] text-[#FAF8F5] overflow-hidden">
       {/* Full-width visual background container */}
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12">
           <div>
             <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.3em] uppercase text-[#C4A27A] font-medium mb-3">
               <Film className="w-3.5 h-3.5" />
@@ -90,8 +90,8 @@ export const PromotionalVideoSection: React.FC<PromotionalVideoSectionProps> = (
           </div>
         </div>
 
-        {/* Cinematic Screen Canvas */}
-        <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-2xl border border-[#2C2B28] group">
+        {/* Cinematic Screen Canvas (Generous height so video controls and timeline don't overlap) */}
+        <div className="relative min-h-[430px] sm:min-h-[480px] md:min-h-[520px] lg:aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-2xl border border-[#2C2B28] group">
           <img
             key={currentScene.image}
             src={currentScene.image}
@@ -104,33 +104,33 @@ export const PromotionalVideoSection: React.FC<PromotionalVideoSectionProps> = (
           <div className="absolute inset-0 bg-gradient-to-t from-[#141413] via-transparent to-black/40" />
 
           {/* Center Play/Pause Trigger */}
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <button
               id="video-play-btn"
               onClick={() => setIsPlaying(!isPlaying)}
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#B8966C]/90 hover:bg-[#C4A27A] text-[#141413] flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-2xl backdrop-blur-md group-hover:ring-8 group-hover:ring-white/10"
+              className="pointer-events-auto w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-[#B8966C]/90 hover:bg-[#C4A27A] text-[#141413] flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-2xl backdrop-blur-md group-hover:ring-8 group-hover:ring-white/10"
               aria-label={isPlaying ? 'Pause film' : 'Play film'}
             >
               {isPlaying ? (
-                <Pause className="w-8 h-8 fill-current" />
+                <Pause className="w-6 h-6 sm:w-8 sm:h-8 fill-current" />
               ) : (
-                <Play className="w-8 h-8 fill-current ml-1" />
+                <Play className="w-6 h-6 sm:w-8 sm:h-8 fill-current ml-0.5 sm:ml-1" />
               )}
             </button>
           </div>
 
           {/* Top Video Overlay Details */}
-          <div className="absolute top-6 left-6 right-6 flex items-center justify-between text-xs tracking-wider">
-            <div className="px-3.5 py-1.5 bg-black/60 backdrop-blur-md rounded border border-white/10 flex items-center space-x-2">
-              <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-red-500 animate-pulse' : 'bg-[#C4A27A]'}`} />
-              <span className="font-mono text-[#FAF8F5] uppercase">
+          <div className="absolute top-4 left-4 right-4 sm:top-6 sm:left-6 sm:right-6 flex items-center justify-between text-xs tracking-wider gap-2">
+            <div className="px-3 py-1.5 bg-black/70 backdrop-blur-md rounded border border-white/10 flex items-center space-x-2 max-w-[80%] sm:max-w-none">
+              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${isPlaying ? 'bg-red-500 animate-pulse' : 'bg-[#C4A27A]'}`} />
+              <span className="font-mono text-[#FAF8F5] text-[10px] sm:text-xs uppercase truncate">
                 {isPlaying ? 'Playing Scene' : 'Storyboard Ready'} : {currentScene.title}
               </span>
             </div>
 
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className="p-2 bg-black/60 backdrop-blur-md rounded hover:bg-black/80 transition-colors border border-white/10 text-[#FAF8F5]"
+              className="p-2 bg-black/70 backdrop-blur-md rounded hover:bg-black/80 transition-colors border border-white/10 text-[#FAF8F5] flex-shrink-0"
               aria-label="Toggle Audio"
             >
               {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-[#C4A27A]" />}
@@ -138,21 +138,21 @@ export const PromotionalVideoSection: React.FC<PromotionalVideoSectionProps> = (
           </div>
 
           {/* Bottom Scene Indicator Bar */}
-          <div className="absolute bottom-6 left-6 right-6 text-white">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3">
+          <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 text-white">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-2.5 sm:mb-3">
               <div>
-                <span className="text-[10px] font-mono text-[#C4A27A] uppercase tracking-[0.2em]">
+                <span className="text-[10px] font-mono text-[#C4A27A] uppercase tracking-[0.2em] block mb-0.5">
                   Timeline {currentScene.time}
                 </span>
-                <h3 className="font-serif text-xl sm:text-2xl font-light">
+                <h3 className="font-serif text-lg sm:text-2xl font-light leading-tight">
                   {currentScene.title}
                 </h3>
-                <p className="text-xs text-[#D8CCB8]/90 max-w-lg">
+                <p className="text-[11px] sm:text-xs text-[#D8CCB8]/90 max-w-lg mt-0.5 line-clamp-2 sm:line-clamp-none">
                   {currentScene.description}
                 </p>
               </div>
 
-              <span className="text-[11px] font-mono text-[#D8CCB8]/80 mt-2 sm:mt-0">
+              <span className="text-[10px] sm:text-[11px] font-mono text-[#D8CCB8]/80 mt-1 sm:mt-0">
                 Scene {activeSceneIndex + 1} of {storylineScenes.length}
               </span>
             </div>
@@ -177,19 +177,6 @@ export const PromotionalVideoSection: React.FC<PromotionalVideoSectionProps> = (
                 />
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* Pitching & Production Architecture Disclaimer */}
-        <div className="mt-8 p-5 bg-[#1C1B1A] border border-[#2C2B28] rounded-xl flex items-start space-x-4">
-          <Info className="w-5 h-5 text-[#C4A27A] flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-[#D8CCB8] space-y-1">
-            <p className="font-medium text-[#FAF8F5]">
-              Production Architecture & AI Video Pipeline:
-            </p>
-            <p className="text-[#D8CCB8]/80 leading-relaxed">
-              This cinematic module is pre-architected to host an AI-assisted promotional film synthesized from the client’s real high-resolution property photography. Once photography is delivered, footage of the exterior, ocean villas, infinity pool, and sunset sails will be seamlessly compiled into a 4K promotional masterpiece.
-            </p>
           </div>
         </div>
       </div>

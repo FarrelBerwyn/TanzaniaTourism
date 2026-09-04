@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, Sparkles } from 'lucide-react';
+import { X, Send, Sparkles } from 'lucide-react';
 import { Language } from '../types';
 import { CHAT_TRANSLATIONS } from '../data/chatTranslations';
+import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface Message {
   id: string;
@@ -149,7 +150,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     // Itinerary builder inquiries
     if (q.includes('itinerary') || q.includes('bespoke schedule') || q.includes('journey')) {
       return {
-        text: 'I would be delighted to personalize your multi-day Tanzania journey! Our team will harmonize your island villa stay at Zanzirangi House with your chosen excursions and mainland safari flights.',
+        text: 'I would be delighted to personalize your multi-day Tanzania journey! Our team will harmonize your island villa stay with your chosen excursions and mainland safari flights.',
         action: {
           label: 'Book Dates with Concierge',
           onClick: () => (onOpenBooking ? onOpenBooking() : scrollToSection('stay')),
@@ -218,11 +219,59 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
       };
     }
 
+    // FAQ: Check-in & Check-out times
+    const checkinKeywords = ['check-in', 'checkin', 'check out', 'checkout', 'horaires', 'muda wa kuingia', 'horario', 'arrived', 'departure', 'jam masuk', 'waktu masuk'];
+    if (checkinKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.checkin || 'Standard check-in is from 14:00 (2:00 PM) and check-out is until 11:00 AM. Flexible early check-in or late checkout can be accommodated based on villa availability.',
+        action: {
+          label: t.bookAction || 'Book a Villa',
+          onClick: () => (onOpenBooking ? onOpenBooking() : scrollToSection('stay')),
+        },
+      };
+    }
+
+    // FAQ: High-Speed Wi-Fi
+    const wifiKeywords = ['wifi', 'wi-fi', 'internet', 'speed', 'starlink', 'network', 'connect', 'online'];
+    if (wifiKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.wifi || 'High-speed Starlink satellite Wi-Fi (150+ Mbps) is complimentary across all private villas, gardens, and dining pavilions, ensuring reliable connectivity for streaming or remote work.',
+        action: {
+          label: 'Check Villa Features',
+          onClick: () => scrollToSection('stay'),
+        },
+      };
+    }
+
+    // FAQ: Payment & Cancellation Policy
+    const paymentKeywords = ['payment', 'pay', 'cancel', 'deposit', 'card', 'visa', 'mastercard', 'amex', 'paiement', 'pago', 'malipo', 'bayar', 'pembayaran'];
+    if (paymentKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.payment || 'We accept major credit cards (Visa, MasterCard, Amex), international bank transfers, and mobile payments. Cancellation terms offer full flexibility up to 14 days prior to arrival.',
+        action: {
+          label: t.bookAction || 'Reserve a Villa',
+          onClick: () => (onOpenBooking ? onOpenBooking() : scrollToSection('stay')),
+        },
+      };
+    }
+
+    // FAQ: Pools & Beach Access
+    const poolKeywords = ['pool', 'plunge', 'swim', 'beach', 'ocean', 'piscine', 'bwawa', 'piscina', 'pantai', 'kolam'];
+    if (poolKeywords.some((k) => q.includes(k))) {
+      return {
+        text: 'Every single one of our 8 luxury sanctuaries features its own private freshwater plunge pool, sun loungers, and direct private pathway access to the pristine shores of the Indian Ocean.',
+        action: {
+          label: 'View Private Villas',
+          onClick: () => scrollToSection('stay'),
+        },
+      };
+    }
+
     // General categories
     const safariKeywords = ['safari', 'wildlife', 'big five', 'fly-in', 'game drive', 'bush'];
     if (safariKeywords.some((k) => q.includes(k))) {
       return {
-        text: 'Zanzirangi House organizes chartered fly-in safaris directly from Zanzibar to Serengeti, Ngorongoro Crater, and Tarangire with luxury partner camps. Would you like to view our safari destinations?',
+        text: 'We organize chartered fly-in safaris directly from Zanzibar to Serengeti, Ngorongoro Crater, and Tarangire with luxury partner camps. Would you like to view our safari destinations?',
         action: {
           label: 'View Safari Destinations',
           onClick: () => scrollToSection('tanzania'),
@@ -241,7 +290,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     ];
     if (villaKeywords.some((k) => q.includes(k))) {
       return {
-        text: t.botVillaAnswer || 'Zanzirangi House features 8 handcrafted luxury sanctuaries including oceanfront pool villas and secluded garden bungalows. Would you like to check dates and availability?',
+        text: t.botVillaAnswer || 'We feature 8 handcrafted luxury sanctuaries including oceanfront pool villas and secluded garden bungalows. Would you like to check dates and availability?',
         action: {
           label: t.actionCheckVillas || 'Check Villa Availability',
           onClick: () => (onOpenBooking ? onOpenBooking() : scrollToSection('stay')),
@@ -260,7 +309,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     ];
     if (transferKeywords.some((k) => q.includes(k))) {
       return {
-        text: t.botTransferAnswer || 'We provide private VIP meet-and-greet and chauffeur shuttle transfers from Abeid Amani Karume International Airport (ZNZ) directly to Zanzirangi House in Kizimkazi.',
+        text: t.replies.transfer || 'We provide private VIP meet-and-greet and chauffeur shuttle transfers from Abeid Amani Karume International Airport (ZNZ) directly to our sanctuary in Kizimkazi.',
         action: {
           label: 'View Transfer Details',
           onClick: () => scrollToSection('shuttle'),
@@ -279,7 +328,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     ];
     if (diningKeywords.some((k) => q.includes(k))) {
       return {
-        text: t.botDiningAnswer || 'Our gastronomic philosophy embraces organic garden-to-table produce and line-caught seafood with authentic Swahili and fine international dining.',
+        text: t.replies.dining || 'Our gastronomic philosophy embraces organic garden-to-table produce and line-caught seafood with authentic Swahili and fine international dining.',
         action: {
           label: 'Taste Dining & Garden Menu',
           onClick: () => scrollToSection('dining'),
@@ -298,7 +347,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     ];
     if (excursionKeywords.some((k) => q.includes(k))) {
       return {
-        text: t.botExcursionAnswer || 'We curate 10 signature Zanzibar adventures including wild dolphin cruises in Menai Bay, Mnemba Island snorkeling, Stone Town heritage tours, and sunset dhow sails.',
+        text: t.replies.excursions || 'We curate 10 signature Zanzibar adventures including wild dolphin cruises in Menai Bay, Mnemba Island snorkeling, Stone Town heritage tours, and sunset dhow sails.',
         action: {
           label: 'Explore Experiences',
           onClick: () => scrollToSection('experiences'),
@@ -309,7 +358,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     const conciergeKeywords = ['speak', 'talk', 'concierge', 'host', 'team', 'call', 'arrange', 'help', 'contact'];
     if (conciergeKeywords.some((k) => q.includes(k))) {
       return {
-        text: 'Jambo! I am right here to help you arrange your custom stay and services at Zanzirangi House. Tell me your preferred dates, party size, or experiences and I will tailor everything to your rhythm.',
+        text: 'Jambo! I am right here to help you arrange your custom stay and private services. Tell me your preferred dates, party size, or experiences and I will tailor everything to your rhythm.',
         action: {
           label: 'Plan Your Stay',
           onClick: () => (onOpenBooking ? onOpenBooking() : scrollToSection('stay')),
@@ -318,7 +367,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     }
 
     return {
-      text: t.botFallbackAnswer || 'I am happy to assist with all your questions regarding your stay, dining, island adventures, and Tanzania safaris at Zanzirangi House.',
+      text: t.replies.fallback || 'I am happy to assist with all your questions regarding your stay, dining, island adventures, and Tanzania safaris.',
       action: {
         label: 'Plan Your Stay',
         onClick: () => (onOpenBooking ? onOpenBooking() : scrollToSection('stay')),
@@ -382,36 +431,124 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     return () => window.removeEventListener('open-customer-support', handleOpenSupportEvent);
   }, []);
 
-  const serviceShortcuts = [
+  const faqShortcuts = [
     {
-      label: '🛏 Check Villas',
-      onClick: () => (onOpenBooking ? onOpenBooking() : scrollToSection('stay')),
+      label: '🕒 Check-in Times',
+      query: 'What are the check-in and check-out times?',
     },
     {
       label: '✈ Airport Shuttle',
-      onClick: () => scrollToSection('shuttle'),
+      query: 'How does the airport transfer work and how far is it?',
     },
     {
-      label: '🦁 Tanzania Safari',
-      onClick: () => scrollToSection('tanzania'),
+      label: '🍳 Breakfast & Dining',
+      query: 'Is breakfast included and what dining options are available?',
     },
     {
-      label: '🍽 Garden Dining',
-      onClick: () => scrollToSection('dining'),
+      label: '📶 High-Speed Wi-Fi',
+      query: 'Is there high-speed Wi-Fi available across the property?',
     },
     {
-      label: '🗺 Island Experiences',
-      onClick: () => scrollToSection('experiences'),
+      label: '🏊 Private Pools',
+      query: 'Do all villas have private plunge pools and beach access?',
+    },
+    {
+      label: '🦁 Serengeti Safari',
+      query: 'How can we arrange a Serengeti safari or island excursions?',
+    },
+    {
+      label: '💳 Payment & Cancel',
+      query: 'What payment methods and cancellation policies apply?',
     },
   ];
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start font-sans">
-      {/* Customer Support Chat Window */}
+    <>
+      {/* Floating Avatar Trigger Button in Bottom Left Corner (Z-30 under dark blur backdrop when open, Z-40 when closed) */}
+      <div
+        className={`fixed bottom-4 left-4 sm:bottom-6 sm:left-6 ${
+          isOpen ? 'z-30 pointer-events-none' : 'z-40'
+        } flex items-center font-sans transition-all duration-300`}
+      >
+        <button
+          id="chat-assistant-avatar-btn"
+          onClick={() => setIsOpen(!isOpen)}
+          className="group relative flex items-center space-x-2 sm:space-x-3 focus:outline-none"
+          aria-label="Open Zanzirangi Customer Support"
+        >
+          {/* Glowing Circle Avatar with Golden Ring */}
+          <div className="relative">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden p-0.5 bg-gradient-to-tr from-[#B8966C] via-[#C4A27A] to-[#FAF8F5] shadow-2xl transform transition-transform duration-300 group-hover:scale-110">
+              <div className="w-full h-full rounded-full overflow-hidden bg-[#141413]">
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80"
+                  alt="Juma - Zanzirangi Customer Support Avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Active online pulsing green radar signal */}
+            <span className="absolute top-0 right-0 flex h-3.5 w-3.5 sm:h-4 sm:w-4">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 bg-emerald-500 border-2 border-[#141413] shadow-[0_0_8px_#10b981]" />
+            </span>
+
+            {/* Unread Message Dot */}
+            {hasUnread && !isOpen && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 z-10">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#B8966C] opacity-75" />
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-[#B8966C] text-[9px] font-bold text-[#141413] flex items-center justify-center">
+                  1
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* MOBILE FORMAT (HP): Hanya avatar dan card kecil yang bernama Juma, tanpa deskripsi */}
+          <div className="sm:hidden flex items-center space-x-1.5 px-3 py-1.5 bg-[#141413]/95 border border-[#C4A27A]/50 rounded-xl text-[#FAF8F5] shadow-xl backdrop-blur-md">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-xs font-semibold text-[#FAF8F5] tracking-wide">
+              Juma
+            </span>
+          </div>
+
+          {/* DESKTOP FORMAT: Full Customer Support Tag Pill with Description */}
+          <div className="hidden sm:flex items-center space-x-2 px-4 py-2.5 bg-[#141413]/95 hover:bg-[#1C1B1A] border border-[#C4A27A]/50 rounded-2xl text-[#FAF8F5] shadow-2xl backdrop-blur-md transition-all duration-300 group-hover:border-[#C4A27A]">
+            <div className="flex flex-col text-left leading-tight">
+              <span className="text-xs font-semibold text-[#FAF8F5] tracking-wide">
+                Customer Support
+              </span>
+              <span className="text-[10px] text-emerald-400 font-mono tracking-wider flex items-center space-x-1.5 mt-0.5 font-medium">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span>Online • Juma</span>
+              </span>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      {/* Dark Blurred Backdrop: Covers screen and places avatar below it */}
+      {isOpen && (
+        <div
+          id="customer-support-mobile-backdrop"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 transition-opacity duration-300"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Customer Support Chat Window (Positioned on top at Z-50 with larger side gaps and slightly smaller width) */}
       {isOpen && (
         <div
           id="customer-support-chat-window"
-          className="mb-3 w-[360px] sm:w-[410px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[82vh] bg-[#141413]/98 backdrop-blur-2xl border border-[#C4A27A]/50 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fadeIn text-[#FAF8F5]"
+          className="fixed bottom-20 sm:bottom-22 left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 z-50 w-[calc(100vw-3.75rem)] sm:w-[385px] max-w-[385px] h-[510px] sm:h-[550px] max-h-[76vh] sm:max-h-[80vh] bg-[#141413]/98 backdrop-blur-2xl border border-[#C4A27A]/50 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fadeIn text-[#FAF8F5] font-sans"
         >
           {/* Top Header */}
           <div className="px-5 py-4 bg-gradient-to-r from-[#1C1B1A] via-[#22211F] to-[#1C1B1A] border-b border-[#2C2B28] flex items-center justify-between">
@@ -439,7 +576,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
                 </div>
                 <span className="text-[11px] text-emerald-400 font-mono tracking-wider flex items-center space-x-1 rtl:space-x-reverse mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                  <span>Juma • Online at Zanzirangi House</span>
+                  <span>Juma • Private Concierge</span>
                 </span>
               </div>
             </div>
@@ -454,18 +591,24 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
             </button>
           </div>
 
-          {/* Quick Service Action Shortcuts */}
-          <div className="px-3 py-2 bg-[#171615] border-b border-[#2C2B28] flex items-center space-x-2 overflow-x-auto no-scrollbar">
-            {serviceShortcuts.map((action, idx) => (
+          {/* Quick FAQ Shortcuts with Scroll Fade */}
+          <ScrollFadeContainer
+            className="relative max-w-full overflow-hidden bg-[#171615] border-b border-[#2C2B28]"
+            scrollClassName="px-3 py-2 flex items-center space-x-2 overflow-x-auto pr-10 no-scrollbar scroll-smooth"
+            leftGradientClass="bg-gradient-to-r from-[#171615] via-[#171615]/90 to-transparent"
+            rightGradientClass="bg-gradient-to-l from-[#171615] via-[#171615]/90 to-transparent"
+            fadeWidth="w-8 sm:w-10"
+          >
+            {faqShortcuts.map((action, idx) => (
               <button
                 key={idx}
-                onClick={action.onClick}
+                onClick={() => handleSendMessage(action.query)}
                 className="whitespace-nowrap px-3 py-1 bg-white/5 hover:bg-[#B8966C]/20 border border-white/10 hover:border-[#B8966C]/50 rounded-full text-[11px] text-[#D8CCB8] hover:text-[#FAF8F5] transition-all flex-shrink-0"
               >
                 {action.label}
               </button>
             ))}
-          </div>
+          </ScrollFadeContainer>
 
           {/* Messages Container */}
           <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-[#0F0E0E]/95 text-sm">
@@ -484,8 +627,12 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
                   }`}
                 >
                   {msg.sender === 'bot' && (
-                    <div className="w-6 h-6 rounded-full bg-[#B8966C]/20 border border-[#C4A27A]/40 flex items-center justify-center flex-shrink-0 text-[#C4A27A] text-[10px]">
-                      <Bot className="w-3.5 h-3.5" />
+                    <div className="w-6 h-6 rounded-full overflow-hidden border border-[#C4A27A]/60 flex-shrink-0 bg-[#2C2B28] shadow-sm">
+                      <img
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80"
+                        alt="Juma"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   )}
 
@@ -516,8 +663,12 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
 
             {isTyping && (
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <div className="w-6 h-6 rounded-full bg-[#B8966C]/20 border border-[#C4A27A]/40 flex items-center justify-center flex-shrink-0 text-[#C4A27A]">
-                  <Bot className="w-3.5 h-3.5" />
+                <div className="w-6 h-6 rounded-full overflow-hidden border border-[#C4A27A]/60 flex-shrink-0 bg-[#2C2B28] shadow-sm">
+                  <img
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80"
+                    alt="Juma"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="px-4 py-2.5 bg-[#1C1B1A] border border-[#2C2B28] rounded-2xl rounded-bl-none flex items-center space-x-1.5">
                   <span className="w-1.5 h-1.5 bg-[#C4A27A] rounded-full animate-bounce [animation-delay:-0.3s]" />
@@ -529,8 +680,14 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Prompts Chips */}
-          <div className="px-3.5 py-2 bg-[#171615] border-t border-[#2C2B28] overflow-x-auto flex items-center space-x-2 rtl:space-x-reverse no-scrollbar">
+          {/* Quick Prompts Chips with Scroll Fade */}
+          <ScrollFadeContainer
+            className="relative max-w-full overflow-hidden bg-[#171615] border-t border-[#2C2B28]"
+            scrollClassName="px-3.5 py-2 overflow-x-auto flex items-center space-x-2 rtl:space-x-reverse pr-10 no-scrollbar scroll-smooth"
+            leftGradientClass="bg-gradient-to-r from-[#171615] via-[#171615]/90 to-transparent"
+            rightGradientClass="bg-gradient-to-l from-[#171615] via-[#171615]/90 to-transparent"
+            fadeWidth="w-8 sm:w-10"
+          >
             {t.quickPrompts.map((p, idx) => (
               <button
                 key={idx}
@@ -540,7 +697,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
                 {p.label}
               </button>
             ))}
-          </div>
+          </ScrollFadeContainer>
 
           {/* Input Bar */}
           <form
@@ -554,7 +711,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask anything about Zanzirangi House..."
+              placeholder={t.inputPlaceholder || "Ask about check-in, villas, transfers, safaris..."}
               className="flex-1 bg-[#141413] border border-[#2C2B28] rounded-xl px-3.5 py-2.5 text-xs text-[#FAF8F5] placeholder-[#8C8880] focus:outline-none focus:border-[#C4A27A] transition-colors"
             />
             <button
@@ -568,59 +725,6 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
           </form>
         </div>
       )}
-
-      {/* Floating Avatar Trigger Button in Bottom Left Corner */}
-      <button
-        id="chat-assistant-avatar-btn"
-        onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center space-x-3 focus:outline-none"
-        aria-label="Open Zanzirangi Customer Support"
-      >
-        {/* Glowing Circle Avatar with Golden Ring */}
-        <div className="relative">
-          <div className="w-14 h-14 rounded-full overflow-hidden p-0.5 bg-gradient-to-tr from-[#B8966C] via-[#C4A27A] to-[#FAF8F5] shadow-2xl transform transition-transform duration-300 group-hover:scale-110">
-            <div className="w-full h-full rounded-full overflow-hidden bg-[#141413]">
-              <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80"
-                alt="Juma - Zanzirangi Customer Support Avatar"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-
-          {/* Active online pulsing green radar signal */}
-          <span className="absolute top-0 right-0 flex h-4 w-4">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
-            <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-[#141413] shadow-[0_0_8px_#10b981]" />
-          </span>
-
-          {/* Unread Message Dot */}
-          {hasUnread && !isOpen && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 z-10">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#B8966C] opacity-75" />
-              <span className="relative inline-flex rounded-full h-4 w-4 bg-[#B8966C] text-[9px] font-bold text-[#141413] flex items-center justify-center">
-                1
-              </span>
-            </span>
-          )}
-        </div>
-
-        {/* Customer Support Tag Pill */}
-        <div className="flex items-center space-x-2 px-4 py-2.5 bg-[#141413]/95 hover:bg-[#1C1B1A] border border-[#C4A27A]/50 rounded-2xl text-[#FAF8F5] shadow-2xl backdrop-blur-md transition-all duration-300 group-hover:border-[#C4A27A]">
-          <div className="flex flex-col text-left leading-tight">
-            <span className="text-xs font-semibold text-[#FAF8F5] tracking-wide">
-              Customer Support
-            </span>
-            <span className="text-[10px] text-emerald-400 font-mono tracking-wider flex items-center space-x-1.5 mt-0.5 font-medium">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span>Online • Juma</span>
-            </span>
-          </div>
-        </div>
-      </button>
-    </div>
+    </>
   );
 };

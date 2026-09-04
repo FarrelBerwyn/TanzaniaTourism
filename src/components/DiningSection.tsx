@@ -3,6 +3,7 @@ import { UtensilsCrossed, Sparkles, BookOpen, Leaf, Sun, Sunset, Moon, Coffee, H
 import { Language } from '../types';
 import { DINING_CATEGORIES } from '../data/dining';
 import { TRANSLATIONS } from '../data/translations';
+import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface DiningSectionProps {
   currentLang: Language;
@@ -55,7 +56,7 @@ export const DiningSection: React.FC<DiningSectionProps> = ({ currentLang }) => 
   ];
 
   return (
-    <section id="dining" className="py-24 md:py-36 bg-[#FAF8F5] text-[#1C1B1A]">
+    <section id="dining" className="pt-16 sm:pt-20 md:pt-28 pb-10 sm:pb-14 md:pb-20 bg-[#FAF8F5] text-[#1C1B1A]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
@@ -179,12 +180,19 @@ export const DiningSection: React.FC<DiningSectionProps> = ({ currentLang }) => 
               </h3>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            {/* Scrollable Cuisine Categories with Dynamic Left & Right Gradient Transparent Fade */}
+            <ScrollFadeContainer
+              className="relative w-full md:w-auto max-w-full overflow-hidden"
+              scrollClassName="flex items-center space-x-2 overflow-x-auto no-scrollbar scroll-smooth py-1 pr-14 sm:pr-16"
+              leftGradientClass="bg-gradient-to-r from-[#1C1B1A] via-[#1C1B1A]/90 to-transparent"
+              rightGradientClass="bg-gradient-to-l from-[#1C1B1A] via-[#1C1B1A]/90 to-transparent"
+              fadeWidth="w-12 sm:w-16"
+            >
               {DINING_CATEGORIES.map((cat, idx) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategoryIndex(idx)}
-                  className={`px-4 sm:px-5 py-2 text-xs tracking-[0.16em] uppercase font-semibold rounded-full transition-all duration-300 ${
+                  className={`whitespace-nowrap flex-shrink-0 px-4 sm:px-5 py-2 text-xs tracking-[0.16em] uppercase font-semibold rounded-full transition-all duration-300 ${
                     activeCategoryIndex === idx
                       ? 'bg-[#B8966C] text-[#141413] shadow-md'
                       : 'bg-[#22211F] text-[#D8CCB8]/70 hover:bg-[#2C2B28] hover:text-white'
@@ -193,7 +201,7 @@ export const DiningSection: React.FC<DiningSectionProps> = ({ currentLang }) => 
                   {cat.tabLabel || cat.name}
                 </button>
               ))}
-            </div>
+            </ScrollFadeContainer>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">

@@ -4,6 +4,7 @@ import { GalleryItem, GalleryCategory, Language } from '../types';
 import { GALLERY_DATA } from '../data/gallery';
 import { TRANSLATIONS } from '../data/translations';
 import { LightboxModal } from './LightboxModal';
+import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface GallerySectionProps {
   currentLang: Language;
@@ -31,10 +32,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ currentLang }) =
       : GALLERY_DATA.filter((item) => item.category === activeCategory);
 
   return (
-    <section id="gallery" className="py-24 md:py-32 bg-[#141413] text-[#FAF8F5]">
+    <section id="gallery" className="pt-6 sm:pt-10 md:pt-14 pb-20 sm:pb-28 md:pb-36 bg-[#141413] text-[#FAF8F5]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12">
           <div>
             <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.3em] uppercase text-[#C4A27A] font-medium mb-3">
               <Camera className="w-3.5 h-3.5" />
@@ -52,13 +53,19 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ currentLang }) =
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-4 mb-10 no-scrollbar">
+        {/* Filter Tabs with Dynamic Left & Right Gradient Fade */}
+        <ScrollFadeContainer
+          className="relative max-w-full overflow-hidden mb-10"
+          scrollClassName="flex items-center space-x-2 overflow-x-auto pb-4 pr-14 sm:pr-16 no-scrollbar scroll-smooth"
+          leftGradientClass="bg-gradient-to-r from-[#141413] via-[#141413]/90 to-transparent"
+          rightGradientClass="bg-gradient-to-l from-[#141413] via-[#141413]/90 to-transparent"
+          bottomOffset="bottom-4"
+        >
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2 text-xs tracking-[0.14em] uppercase font-semibold rounded-full transition-all whitespace-nowrap ${
+              className={`flex-shrink-0 px-4 py-2 text-xs tracking-[0.14em] uppercase font-semibold rounded-full transition-all whitespace-nowrap ${
                 activeCategory === cat.id
                   ? 'bg-[#B8966C] text-[#141413] shadow-lg'
                   : 'bg-[#22211F] text-[#D8CCB8]/70 hover:bg-[#2C2B28] hover:text-[#FAF8F5]'
@@ -67,7 +74,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ currentLang }) =
               {cat.label}
             </button>
           ))}
-        </div>
+        </ScrollFadeContainer>
 
         {/* Dynamic Editorial Masonry Layout */}
         <div

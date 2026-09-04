@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, CheckSquare, Square, MessageSquare, ArrowRight, Sparkles, MapPin, Clock } from 'lucide-react';
 import { Language } from '../types';
 import { SAMPLE_ITINERARY } from '../data/itinerary';
+import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface CustomItinerarySectionProps {
   currentLang: Language;
@@ -68,8 +69,14 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
           </p>
         </div>
 
-        {/* Day Selector Navigation Tabs */}
-        <div className="flex items-center justify-start md:justify-center space-x-2 sm:space-x-3 overflow-x-auto pb-4 mb-10 no-scrollbar">
+        {/* Day Selector Navigation Tabs with Dynamic Left & Right Gradient Fade */}
+        <ScrollFadeContainer
+          className="relative max-w-full overflow-hidden mb-10"
+          scrollClassName="flex items-center justify-start md:justify-center space-x-2 sm:space-x-3 overflow-x-auto pb-4 pr-14 sm:pr-16 no-scrollbar scroll-smooth"
+          leftGradientClass="bg-gradient-to-r from-[#FAF8F5] via-[#FAF8F5]/90 to-transparent"
+          rightGradientClass="bg-gradient-to-l from-[#FAF8F5] via-[#FAF8F5]/90 to-transparent"
+          bottomOffset="bottom-4"
+        >
           {SAMPLE_ITINERARY.map((day, idx) => (
             <button
               key={day.dayNumber}
@@ -88,7 +95,7 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
               </span>
             </button>
           ))}
-        </div>
+        </ScrollFadeContainer>
 
         {/* Active Day Content Box */}
         <div className="bg-[#F4EFE6] border border-[#E7DFD2] rounded-3xl p-6 sm:p-10 mb-12 shadow-md">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Compass, Clock, ArrowRight, MessageSquare, Sparkles } from 'lucide-react';
 import { Language } from '../types';
 import { EXPERIENCES_DATA, Experience } from '../data/experiences';
+import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface ExperiencesSectionProps {
   currentLang: Language;
@@ -32,10 +33,10 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
   });
 
   return (
-    <section id="experiences" className="py-24 md:py-36 bg-[#FAF8F5] text-[#1C1B1A]">
+    <section id="experiences" className="pt-8 sm:pt-12 md:pt-16 pb-20 sm:pb-28 md:pb-36 bg-[#FAF8F5] text-[#1C1B1A]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 pb-6 border-b border-[#E7DFD2]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-6 border-b border-[#E7DFD2]">
           <div>
             <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.3em] uppercase text-[#A07E54] font-semibold mb-3">
               <Compass className="w-3.5 h-3.5" />
@@ -55,13 +56,19 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
             </p>
           </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex items-center space-x-2 mt-8 md:mt-0 overflow-x-auto pb-2 no-scrollbar">
+          {/* Category Filter Pills with Dynamic Left & Right Gradient Fade */}
+          <ScrollFadeContainer
+            className="relative max-w-full overflow-hidden mt-8 md:mt-0"
+            scrollClassName="flex items-center space-x-2 overflow-x-auto pb-2 pr-14 sm:pr-16 no-scrollbar scroll-smooth"
+            leftGradientClass="bg-gradient-to-r from-[#FAF8F5] via-[#FAF8F5]/90 to-transparent"
+            rightGradientClass="bg-gradient-to-l from-[#FAF8F5] via-[#FAF8F5]/90 to-transparent"
+            bottomOffset="bottom-2"
+          >
             {categories.map((cat) => (
               <button
                 key={cat.key}
                 onClick={() => setSelectedCategory(cat.key)}
-                className={`px-4 sm:px-5 py-2.5 text-xs tracking-[0.16em] uppercase font-semibold rounded-full transition-all whitespace-nowrap ${
+                className={`flex-shrink-0 px-4 sm:px-5 py-2.5 text-xs tracking-[0.16em] uppercase font-semibold rounded-full transition-all whitespace-nowrap ${
                   selectedCategory === cat.key
                     ? 'bg-[#1C1B1A] text-[#FAF8F5] shadow-lg'
                     : 'bg-[#E7DFD2]/60 text-[#3E3C38] hover:bg-[#E7DFD2]'
@@ -70,7 +77,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
                 {cat.label}
               </button>
             ))}
-          </div>
+          </ScrollFadeContainer>
         </div>
 
         {/* 10 Luxury Experience Cards Grid */}

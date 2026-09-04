@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Globe, Calendar, Instagram, Facebook, Youtube } from 'lucide-react';
+import { Menu, X, Globe, Calendar } from 'lucide-react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { PROPERTY_CONFIG } from '../data/propertyConfig';
 import logoImg from './zanzirangi-house-logo.jpg';
-
-const TikTokIcon: React.FC<{ className?: string }> = ({ className = 'w-3.5 h-3.5' }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.47 6.27 6.27 0 0 0 1.95-4.47V8.58a8.27 8.27 0 0 0 4.82 1.55V6.69z" />
-  </svg>
-);
 
 interface NavbarProps {
   currentLang: Language;
@@ -42,6 +36,18 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Prevent background scrolling when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const navLinks = [
     { label: t.nav.stay || 'STAY', href: '#stay' },
     { label: t.nav.experiences || 'EXPERIENCES', href: '#experiences' },
@@ -66,33 +72,42 @@ export const Navbar: React.FC<NavbarProps> = ({
     <>
       <header
         id="main-navigation"
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
             ? 'bg-[#141413]/95 backdrop-blur-md border-b border-[#2C2B28]/80 py-2.5 shadow-2xl'
             : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent py-4 sm:py-5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 flex items-center justify-between">
           {/* Brand Logo & Name */}
           <a
             href="#"
             id="nav-brand-logo"
-            className="flex items-center space-x-3 tracking-wider group focus:outline-none"
+            className="flex items-center space-x-2.5 sm:space-x-3 tracking-wider group focus:outline-none min-w-0"
           >
             <img
               src={logoImg}
               alt="Zanzirangi House Logo"
               className={`${
-                isScrolled ? 'w-8 h-8 sm:w-9 sm:h-9' : 'w-9 h-9 sm:w-11 sm:h-11'
+                isScrolled ? 'w-8 h-8 sm:w-9 sm:h-9' : 'w-8 h-8 sm:w-11 sm:h-11'
               } rounded-full object-cover border border-[#C4A27A]/50 shadow-md group-hover:scale-105 group-hover:border-[#C4A27A] transition-all duration-300 flex-shrink-0`}
             />
-            <span
-              className={`font-serif tracking-[0.18em] text-[#FAF8F5] uppercase transition-all duration-300 group-hover:text-[#C4A27A] ${
-                isScrolled ? 'text-lg sm:text-xl md:text-2xl' : 'text-xl sm:text-2xl md:text-[26px]'
-              }`}
-            >
-              {PROPERTY_CONFIG.name}
-            </span>
+            <div className="flex flex-col text-left leading-tight">
+              <span
+                className={`font-serif tracking-[0.16em] sm:tracking-[0.2em] text-[#FAF8F5] uppercase transition-all duration-300 group-hover:text-[#C4A27A] font-medium ${
+                  isScrolled ? 'text-xs sm:text-base md:text-lg' : 'text-sm sm:text-lg md:text-xl'
+                }`}
+              >
+                ZANZIRANGI
+              </span>
+              <span
+                className={`font-serif tracking-[0.34em] sm:tracking-[0.4em] text-[#C4A27A] uppercase transition-all duration-300 font-light ${
+                  isScrolled ? 'text-[9px] sm:text-[11px] md:text-xs' : 'text-[10px] sm:text-xs md:text-sm'
+                }`}
+              >
+                HOUSE
+              </span>
+            </div>
           </a>
 
           {/* Desktop Navigation Links */}
@@ -113,50 +128,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action Items */}
           <div className="hidden lg:flex items-center space-x-4 xl:space-x-5">
-            {/* Social Media Links for Tourists */}
-            <div className="flex items-center space-x-2 text-[#FAF8F5]/70 border-r border-[#FAF8F5]/15 pr-3">
-              <a
-                href={PROPERTY_CONFIG.socials.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-1 hover:text-[#C4A27A] transition-colors"
-                title="Instagram"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-3.5 h-3.5" />
-              </a>
-              <a
-                href={PROPERTY_CONFIG.socials.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-1 hover:text-[#C4A27A] transition-colors"
-                title="Facebook: Zanzirangi House"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-3.5 h-3.5" />
-              </a>
-              <a
-                href={PROPERTY_CONFIG.socials.tiktok}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-1 hover:text-[#C4A27A] transition-colors"
-                title="TikTok: @zanzirangihouse"
-                aria-label="TikTok"
-              >
-                <TikTokIcon className="w-3.5 h-3.5" />
-              </a>
-              <a
-                href={PROPERTY_CONFIG.socials.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-1 hover:text-[#C4A27A] transition-colors"
-                title="YouTube: Zanzirangi House"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-3.5 h-3.5" />
-              </a>
-            </div>
-
             {/* Language Selector */}
             <div className="relative">
               <button
@@ -209,7 +180,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button (Collapsed State) */}
           <div className="flex items-center space-x-3 lg:hidden">
             <button
               id="mobile-book-icon-button"
@@ -221,101 +192,80 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               id="mobile-menu-toggle-button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => setMobileMenuOpen(true)}
               className="p-2 text-[#FAF8F5] focus:outline-none"
-              aria-label="Toggle Menu"
+              aria-label="Open Menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <Menu className="w-6 h-6" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Full-Screen Mobile Navigation Overlay */}
+      {/* Full-Screen Mobile Navigation Overlay (Above all layers in Expand Mode) */}
       {mobileMenuOpen && (
         <div
           id="mobile-navigation-overlay"
-          className="fixed inset-0 bg-[#141413]/98 z-40 lg:hidden flex flex-col justify-between pt-24 pb-12 px-8 backdrop-blur-xl animate-fadeIn overflow-y-auto"
+          className="fixed inset-0 w-full h-full bg-[#141413] z-[100] lg:hidden flex flex-col justify-between overflow-y-auto animate-fadeIn text-[#FAF8F5]"
         >
-          <div className="flex flex-col space-y-6 text-center">
-            <div className="flex items-center justify-center space-x-3 mb-4">
+          {/* Top Bar of Expanded Navbar: Logo on Left, Close (X) on Right */}
+          <div className="w-full flex items-center justify-between px-5 sm:px-6 py-4 border-b border-[#2C2B28]/80 bg-[#141413] flex-shrink-0">
+            <a
+              href="#"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center space-x-2.5 tracking-wider focus:outline-none"
+            >
               <img
                 src={logoImg}
                 alt="Zanzirangi House Logo"
-                className="w-10 h-10 rounded-full object-cover border border-[#C4A27A]/50 shadow-sm flex-shrink-0"
+                className="w-8 h-8 rounded-full object-cover border border-[#C4A27A]/50 shadow-md flex-shrink-0"
               />
-              <span className="font-serif text-2xl tracking-[0.15em] text-[#C4A27A] uppercase">
-                {PROPERTY_CONFIG.name}
-              </span>
-            </div>
+              <div className="flex flex-col text-left leading-tight">
+                <span className="font-serif tracking-[0.16em] text-sm text-[#FAF8F5] uppercase font-medium">
+                  ZANZIRANGI
+                </span>
+                <span className="font-serif tracking-[0.34em] text-[10px] text-[#C4A27A] uppercase font-light">
+                  HOUSE
+                </span>
+              </div>
+            </a>
 
+            <button
+              id="mobile-menu-close-button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 -mr-2 rounded-full text-[#FAF8F5] hover:text-[#C4A27A] hover:bg-white/5 transition-colors focus:outline-none"
+              aria-label="Close Menu"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Menu Links Content */}
+          <div className="flex-1 flex flex-col justify-center items-center py-8 px-6 space-y-6 text-center">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="font-serif text-2xl tracking-widest text-[#FAF8F5] hover:text-[#C4A27A] transition-colors"
+                className="font-serif text-2xl tracking-[0.18em] text-[#FAF8F5] hover:text-[#C4A27A] transition-colors py-1"
               >
                 {link.label}
               </a>
             ))}
           </div>
 
-          <div className="flex flex-col items-center space-y-6 mt-8">
-            {/* Mobile Social Links */}
-            <div className="flex items-center justify-center space-x-4 text-[#FAF8F5]/80">
-              <a
-                href={PROPERTY_CONFIG.socials.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 bg-white/5 rounded-full hover:text-[#C4A27A] hover:bg-white/10 transition-colors"
-                title="Instagram"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a
-                href={PROPERTY_CONFIG.socials.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 bg-white/5 rounded-full hover:text-[#C4A27A] hover:bg-white/10 transition-colors"
-                title="Facebook"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a
-                href={PROPERTY_CONFIG.socials.tiktok}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 bg-white/5 rounded-full hover:text-[#C4A27A] hover:bg-white/10 transition-colors"
-                title="TikTok"
-                aria-label="TikTok"
-              >
-                <TikTokIcon className="w-4 h-4" />
-              </a>
-              <a
-                href={PROPERTY_CONFIG.socials.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 bg-white/5 rounded-full hover:text-[#C4A27A] hover:bg-white/10 transition-colors"
-                title="YouTube"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-            </div>
-
+          {/* Bottom Section: Languages & Plan Stay Button */}
+          <div className="flex flex-col items-center space-y-5 px-6 pb-8 pt-3 flex-shrink-0 border-t border-[#2C2B28]/50">
             {/* Language Selector in Mobile */}
             <div className="flex flex-wrap items-center justify-center gap-2 text-xs tracking-widest max-w-xs">
               {languages.map((l) => (
                 <button
                   key={l.code}
                   onClick={() => onSelectLang(l.code)}
-                  className={`px-2.5 py-1 rounded transition-colors ${
+                  className={`px-3 py-1.5 rounded-full transition-colors text-xs ${
                     currentLang === l.code
-                      ? 'bg-[#B8966C] text-[#141413] font-semibold'
-                      : 'text-[#FAF8F5]/70 bg-white/5 hover:text-white'
+                      ? 'bg-[#B8966C] text-[#141413] font-semibold shadow-sm'
+                      : 'text-[#FAF8F5]/70 bg-white/5 hover:text-white border border-white/5'
                   }`}
                 >
                   {l.flag} {l.code.toUpperCase()}
@@ -324,11 +274,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             <button
+              id="mobile-overlay-book-button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenBooking();
               }}
-              className="w-full py-3.5 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-sm tracking-[0.2em] uppercase font-semibold rounded text-center shadow-lg"
+              className="w-full py-3.5 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs sm:text-sm tracking-[0.2em] uppercase font-semibold rounded-lg text-center shadow-xl active:scale-[0.98] transition-all"
             >
               {t.nav.planStay || t.nav.bookStay || 'PLAN YOUR STAY'}
             </button>

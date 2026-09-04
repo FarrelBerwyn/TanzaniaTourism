@@ -3,6 +3,7 @@ import { X, Users, Bed, Bath, Maximize2, Eye, Check, Calendar, ArrowRight, Utens
 import { Villa, Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { PROPERTY_CONFIG } from '../data/propertyConfig';
+import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface VillaDetailModalProps {
   villa: Villa | null;
@@ -79,9 +80,15 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
               </div>
             </div>
 
-            {/* Thumbnails */}
+            {/* Thumbnails with Dynamic Left & Right Gradient Fade */}
             {allImages.length > 1 && (
-              <div className="flex items-center space-x-3 overflow-x-auto pb-2 no-scrollbar">
+              <ScrollFadeContainer
+                className="relative max-w-full overflow-hidden"
+                scrollClassName="flex items-center space-x-3 overflow-x-auto pb-2 pr-14 sm:pr-16 no-scrollbar scroll-smooth"
+                leftGradientClass="bg-gradient-to-r from-[#FAF8F5] via-[#FAF8F5]/90 to-transparent"
+                rightGradientClass="bg-gradient-to-l from-[#FAF8F5] via-[#FAF8F5]/90 to-transparent"
+                bottomOffset="bottom-2"
+              >
                 {allImages.map((img, idx) => (
                   <button
                     key={idx}
@@ -95,7 +102,7 @@ export const VillaDetailModal: React.FC<VillaDetailModalProps> = ({
                     <img src={img} alt="thumbnail" className="w-full h-full object-cover" />
                   </button>
                 ))}
-              </div>
+              </ScrollFadeContainer>
             )}
           </div>
 

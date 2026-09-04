@@ -16,10 +16,10 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({ currentLan
     FACILITIES_DATA.find((f) => f.id === activeFacilityId) || FACILITIES_DATA[0];
 
   return (
-    <section id="facilities" className="py-24 md:py-32 bg-[#141413] text-[#FAF8F5]">
+    <section id="facilities" className="pt-6 sm:pt-10 md:pt-14 pb-8 sm:pb-12 md:pb-16 bg-[#141413] text-[#FAF8F5]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Section Heading */}
-        <div className="max-w-3xl mb-16">
+        <div className="max-w-3xl mb-8 sm:mb-12">
           <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.3em] uppercase text-[#C4A27A] font-medium mb-3">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Curated Estate Amenities</span>
@@ -36,7 +36,7 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({ currentLan
         </div>
 
         {/* Dynamic Editorial Showcase Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-8 sm:mb-12">
           {/* Left Column: Interactive Facility List */}
           <div className="lg:col-span-5 space-y-2">
             {FACILITIES_DATA.map((fac) => {

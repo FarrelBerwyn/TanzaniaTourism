@@ -3,6 +3,7 @@ import { Users, Bed, Bath, ArrowRight, Waves, Check, Sparkles, Eye } from 'lucid
 import { Villa, Language } from '../types';
 import { VILLAS_DATA } from '../data/villas';
 import { TRANSLATIONS } from '../data/translations';
+import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface VillasSectionProps {
   currentLang: Language;
@@ -54,8 +55,14 @@ export const VillasSection: React.FC<VillasSectionProps> = ({
             </p>
           </div>
 
-          {/* Filter Tabs: Villas, Bungalows, Rooms */}
-          <div className="flex items-center space-x-2 mt-8 md:mt-0 overflow-x-auto pb-2 no-scrollbar">
+          {/* Filter Tabs: Villas, Bungalows, Rooms with Dynamic Left & Right Gradient Fade */}
+          <ScrollFadeContainer
+            className="relative max-w-full overflow-hidden mt-8 md:mt-0"
+            scrollClassName="flex items-center space-x-2 overflow-x-auto pb-2 pr-14 sm:pr-16 no-scrollbar scroll-smooth"
+            leftGradientClass="bg-gradient-to-r from-[#F4EFE6] via-[#F4EFE6]/90 to-transparent"
+            rightGradientClass="bg-gradient-to-l from-[#F4EFE6] via-[#F4EFE6]/90 to-transparent"
+            bottomOffset="bottom-2"
+          >
             {[
               { key: 'all', label: 'All Accommodations' },
               { key: 'villas', label: 'Villas' },
@@ -65,7 +72,7 @@ export const VillasSection: React.FC<VillasSectionProps> = ({
               <button
                 key={tab.key}
                 onClick={() => setActiveFilter(tab.key as any)}
-                className={`px-5 py-2.5 text-xs tracking-[0.16em] uppercase font-semibold rounded-full transition-all whitespace-nowrap ${
+                className={`flex-shrink-0 px-5 py-2.5 text-xs tracking-[0.16em] uppercase font-semibold rounded-full transition-all whitespace-nowrap ${
                   activeFilter === tab.key
                     ? 'bg-[#1C1B1A] text-[#FAF8F5] shadow-lg'
                     : 'bg-[#E7DFD2]/70 text-[#3E3C38] hover:bg-[#E7DFD2]'
@@ -74,7 +81,7 @@ export const VillasSection: React.FC<VillasSectionProps> = ({
                 {tab.label}
               </button>
             ))}
-          </div>
+          </ScrollFadeContainer>
         </div>
 
         {/* Featured Flagship Villa Banner */}

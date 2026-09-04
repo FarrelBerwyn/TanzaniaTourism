@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Users, Home, ArrowRight } from 'lucide-react';
+import { Calendar, Users, Home, ArrowRight, ChevronDown } from 'lucide-react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { VILLAS_DATA } from '../data/villas';
@@ -33,6 +33,7 @@ export const QuickBookingBar: React.FC<QuickBookingBarProps> = ({
   const [checkOut, setCheckOut] = useState(defaultCheckOut);
   const [guests, setGuests] = useState(2);
   const [selectedVillaId, setSelectedVillaId] = useState('');
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,16 +45,60 @@ export const QuickBookingBar: React.FC<QuickBookingBarProps> = ({
     });
   };
 
+  const selectedVillaObj = VILLAS_DATA.find((v) => v.id === selectedVillaId);
+
   return (
     <div
       id="quick-booking-bar-wrapper"
-      className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 -mt-10 sm:-mt-14"
+      className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-14"
     >
-      <div className="bg-[#1C1B1A] border border-[#2C2B28] rounded-xl shadow-2xl p-4 sm:p-6 backdrop-blur-xl">
+      <div className="bg-[#1C1B1A] border border-[#2C2B28] rounded-2xl sm:rounded-xl shadow-2xl p-3.5 sm:p-6 backdrop-blur-xl transition-all duration-300">
+        {/* Mobile Format: Collapse / Expand Header Button */}
+        <button
+          type="button"
+          id="mobile-quick-booking-toggle"
+          onClick={() => setIsMobileExpanded(!isMobileExpanded)}
+          aria-expanded={isMobileExpanded}
+          className="sm:hidden w-full flex items-center justify-between p-1 focus:outline-none text-left"
+        >
+          <div className="flex items-center space-x-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-[#B8966C]/20 border border-[#C4A27A]/40 flex items-center justify-center text-[#C4A27A] flex-shrink-0 shadow-inner">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-[10px] tracking-[0.2em] uppercase text-[#C4A27A] font-semibold">
+                {t.quickBooking.title || 'Plan Your Stay'}
+              </span>
+              <span className="text-xs text-[#FAF8F5] font-medium truncate mt-0.5">
+                {checkIn} → {checkOut} • {guests} {t.quickBooking.guestsCount}
+              </span>
+              {selectedVillaObj && (
+                <span className="text-[10px] text-[#D8CCB8]/70 truncate">
+                  {selectedVillaObj.name}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#B8966C]/20 border border-[#C4A27A]/40 rounded-xl text-xs font-semibold text-[#C4A27A] flex-shrink-0 ml-2 shadow-sm">
+            <span>{isMobileExpanded ? 'Tutup' : 'Check Dates'}</span>
+            <ChevronDown
+              className={`w-4 h-4 transform transition-transform duration-300 ${
+                isMobileExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </div>
+        </button>
+
+        {/* The Booking Form:
+            On mobile: collapsible downwards when clicked (isMobileExpanded)
+            On desktop/tablet (sm+): always visible in horizontal grid layout */}
         <form
           id="quick-booking-form"
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-center"
+          className={`${
+            isMobileExpanded ? 'block animate-fadeIn' : 'hidden'
+          } sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-center mt-3 pt-3 border-t border-[#2C2B28] sm:mt-0 sm:pt-0 sm:border-t-0`}
         >
           {/* Check-In */}
           <div className="relative border-b sm:border-b-0 sm:border-r border-[#2C2B28] pb-3 sm:pb-0 sm:pr-4">

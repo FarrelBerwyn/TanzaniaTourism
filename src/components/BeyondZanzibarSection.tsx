@@ -55,29 +55,29 @@ export const BeyondZanzibarSection: React.FC<BeyondZanzibarSectionProps> = ({
         </div>
 
         {/* Destination Selector Tabs */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 mb-12">
           {TANZANIA_DESTINATIONS.map((dest) => {
             const isSelected = activeDestination.id === dest.id;
             return (
               <button
                 key={dest.id}
                 onClick={() => setActiveDestination(dest)}
-                className={`text-left p-5 sm:p-6 rounded-xl border transition-all duration-300 ${
+                className={`text-left p-3 sm:p-5 lg:p-6 rounded-xl border transition-all duration-300 overflow-hidden ${
                   isSelected
                     ? 'bg-[#22211F] border-[#C4A27A] shadow-xl text-white'
                     : 'bg-[#1C1B1A]/80 border-[#2C2B28] text-[#D8CCB8]/70 hover:border-[#FAF8F5]/30 hover:text-white'
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-serif text-lg sm:text-xl tracking-wider uppercase font-normal">
+                <div className="flex items-center justify-between gap-1 mb-1 sm:mb-2 min-h-[24px]">
+                  <span className="font-serif text-xs min-[360px]:text-sm sm:text-lg lg:text-xl tracking-wide uppercase font-normal truncate">
                     {dest.name}
                   </span>
-                  {isSelected && <Sparkles className="w-4 h-4 text-[#C4A27A]" />}
+                  {isSelected && <Sparkles className="w-3.5 h-3.5 text-[#C4A27A] flex-shrink-0" />}
                 </div>
-                <p className="text-xs text-[#C4A27A] line-clamp-1 font-sans">
+                <p className="text-[11px] sm:text-xs text-[#C4A27A] line-clamp-1 font-sans">
                   {dest.tagline}
                 </p>
-                <span className="text-[10px] font-mono text-[#A07E54] block mt-2">
+                <span className="text-[9px] sm:text-[10px] font-mono text-[#A07E54] block mt-1.5 sm:mt-2 truncate">
                   ✈ {dest.flightTimeFromZanzibar}
                 </span>
               </button>

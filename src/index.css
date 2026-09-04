@@ -31,18 +31,34 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Custom smooth luxury scrollbar */
+/* Custom subtle dark luxury scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF8F5;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D8CCB8;
-  border-radius: 4px;
+  background: #2C2B28;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B8966C;
+  background: #3F3D38;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2C2B28 transparent;
+}
+
+/* Hide scrollbar utility for touch/swipe chip carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
