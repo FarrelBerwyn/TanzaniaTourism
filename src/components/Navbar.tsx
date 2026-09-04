@@ -46,6 +46,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const languages: { code: Language; label: string; flag: string }[] = [
     { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'ar', label: 'العربية', flag: '🇦🇪' },
+    { code: 'zh', label: '中文 (Chinese)', flag: '🇨🇳' },
     { code: 'fr', label: 'Français', flag: '🇫🇷' },
     { code: 'sw', label: 'Kiswahili', flag: '🇹🇿' },
     { code: 'es', label: 'Español', flag: '🇪🇸' },

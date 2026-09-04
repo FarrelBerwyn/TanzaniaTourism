@@ -1,4 +1,4 @@
-export type Language = 'en' | 'fr' | 'sw' | 'es' | 'it';
+export type Language = 'en' | 'fr' | 'sw' | 'es' | 'it' | 'ar' | 'zh';
 
 export type GalleryCategory = 'villas' | 'rooms' | 'pool' | 'dining' | 'food' | 'beach' | 'facilities' | 'experiences';
 
@@ -79,6 +79,7 @@ export interface Facility {
 export interface DiningCategory {
   id: string;
   name: string;
+  tabLabel?: string;
   subtitle: string;
   description: string;
   image: string;

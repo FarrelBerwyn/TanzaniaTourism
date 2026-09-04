@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language, Villa } from './types';
 import { VILLAS_DATA } from './data/villas';
 import { Navbar } from './components/Navbar';
@@ -19,13 +19,19 @@ import { MapSection } from './components/MapSection';
 import { FinalCtaSection } from './components/FinalCtaSection';
 import { Footer } from './components/Footer';
 import { BookingModal } from './components/BookingModal';
-import { WhatsAppButton } from './components/WhatsAppButton';
+import { ChatAssistant } from './components/ChatAssistant';
+import { SecondBannerSection } from './components/SecondBannerSection';
 import { CmsAdminModal } from './components/CmsAdminModal';
 
 export default function App() {
   // Global State
   const [currentLang, setCurrentLang] = useState<Language>('en');
   const [villas, setVillas] = useState<Villa[]>(VILLAS_DATA);
+
+  useEffect(() => {
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  }, [currentLang]);
 
   // Modals State
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
@@ -93,6 +99,12 @@ export default function App() {
           onCheckAvailability={handleCheckAvailability}
         />
 
+        {/* Section 02.5: Second Image Banner (Previous First Banner Image) */}
+        <SecondBannerSection
+          currentLang={currentLang}
+          onOpenBooking={() => handleOpenBooking()}
+        />
+
         {/* Section 03: Property Introduction */}
         <PropertyIntro currentLang={currentLang} />
 
@@ -148,8 +160,8 @@ export default function App() {
         onOpenCmsPitch={() => setCmsPitchModalOpen(true)}
       />
 
-      {/* Floating Concierge WhatsApp Direct Access */}
-      <WhatsAppButton />
+      {/* Customer Support Chat Assistant in Bottom Left Corner */}
+      <ChatAssistant onOpenBooking={() => handleOpenBooking()} />
 
       {/* Villa Detail Modal */}
       {selectedVillaForDetail && (

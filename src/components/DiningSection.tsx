@@ -35,7 +35,7 @@ export const DiningSection: React.FC<DiningSectionProps> = ({ currentLang }) => 
           </p>
 
           {/* Cuisine Category Tabs */}
-          <div className="flex items-center justify-center space-x-2 sm:space-x-4 mt-8">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3.5 mt-8">
             {DINING_CATEGORIES.map((cat, idx) => (
               <button
                 key={cat.id}
@@ -46,7 +46,7 @@ export const DiningSection: React.FC<DiningSectionProps> = ({ currentLang }) => 
                     : 'bg-[#E7DFD2]/60 text-[#3E3C38] hover:bg-[#E7DFD2]'
                 }`}
               >
-                {cat.name.split(' ')[0]} Cuisine
+                {cat.tabLabel || cat.name}
               </button>
             ))}
           </div>

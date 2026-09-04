@@ -38,7 +38,7 @@ export const PropertyIntro: React.FC<PropertyIntroProps> = ({ currentLang }) => 
           {/* Left Column: Visual Story with Layered Composition */}
           <div className="lg:col-span-6 relative">
             <div className="relative aspect-[4/5] rounded-lg overflow-hidden shadow-2xl">
-              {/* CLIENT_PROPERTY_IMAGES: Placeholder property exterior / sunset architecture */}
+              {/* CLIENT_PROPERTY_IMAGES: Oceanfront cliffside resort pool and Indian Ocean sanctuary */}
               <img
                 src="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1400&q=85"
                 alt="Zanzirangi House oceanfront architecture"

@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronDown, Sparkles } from 'lucide-react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
+import heroVideo from '../data/Zanzirangi-home.mp4';
 
 interface HeroSectionProps {
   currentLang: Language;
@@ -26,19 +27,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       id="hero"
       className="relative w-full min-h-screen flex flex-col justify-between overflow-hidden bg-[#141413] text-[#FAF8F5]"
     >
-      {/* Background Image with Cinematic Slow Ken Burns Effect */}
+      {/* Background Video: Zanzirangi-home */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* CLIENT_PROPERTY_IMAGES: Placeholder luxury oceanfront villa hero, to be replaced by client's actual photography */}
-        <div
-          className="w-full h-full bg-cover bg-center transition-transform duration-[14000ms] ease-out scale-105 hover:scale-110"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=2400&q=90')`,
-            filter: 'brightness(0.72) contrast(1.05)',
-          }}
-        />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=2400&q=90"
+          className="w-full h-full object-cover"
+          style={{ filter: 'brightness(0.72) contrast(1.05)' }}
+        >
+          <source src={heroVideo} type="video/mp4" />
+          <source src="./Zanzirangi-home.mp4" type="video/mp4" />
+          <source src="./videos/Zanzirangi-home.mp4" type="video/mp4" />
+        </video>
         {/* Subtle Luxury Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#141413] via-transparent to-black/40" />
-        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141413] via-black/35 to-black/50" />
+        <div className="absolute inset-0 bg-black/20" />
       </div>
 
       {/* Top Spacer for fixed navbar */}

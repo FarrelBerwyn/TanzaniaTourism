@@ -25,6 +25,8 @@ export const Footer: React.FC<FooterProps> = ({
 
   const languages: { code: Language; label: string }[] = [
     { code: 'en', label: 'English' },
+    { code: 'ar', label: 'العربية' },
+    { code: 'zh', label: '中文' },
     { code: 'fr', label: 'Français' },
     { code: 'sw', label: 'Kiswahili' },
     { code: 'es', label: 'Español' },
