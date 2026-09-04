@@ -534,11 +534,11 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
         </button>
       </div>
 
-      {/* Dark Blurred Backdrop: Covers screen and places avatar below it */}
+      {/* Dark Blurred Backdrop: Hanya untuk format Mobile (HP), dihilangkan pada Desktop (sm:hidden) */}
       {isOpen && (
         <div
           id="customer-support-mobile-backdrop"
-          className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 transition-opacity duration-300"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 transition-opacity duration-300 sm:hidden"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
