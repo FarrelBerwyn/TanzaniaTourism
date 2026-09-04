@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Bot, Sparkles, User, ChevronDown } from 'lucide-react';
-import { PROPERTY_CONFIG } from '../data/propertyConfig';
+import { MessageSquare, X, Send, Bot, Sparkles } from 'lucide-react';
+import { Language } from '../types';
+import { CHAT_TRANSLATIONS } from '../data/chatTranslations';
 
 interface Message {
   id: string;
@@ -14,30 +15,63 @@ interface Message {
 }
 
 interface ChatAssistantProps {
+  currentLang?: Language;
   onOpenBooking?: () => void;
 }
 
-export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) => {
+export const ChatAssistant: React.FC<ChatAssistantProps> = ({
+  currentLang = 'en',
+  onOpenBooking,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [hasUnread, setHasUnread] = useState(true);
 
-  const initialMessages: Message[] = [
-    {
-      id: '1',
-      sender: 'bot',
-      text: `Jambo! My name is Juma, your private concierge at ${PROPERTY_CONFIG.name}. How may I assist your stay in Zanzibar today?`,
-      timestamp: 'Just now',
-    },
-  ];
+  const t = CHAT_TRANSLATIONS[currentLang] || CHAT_TRANSLATIONS.en;
+  const isRtl = currentLang === 'ar';
 
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 'welcome',
+      sender: 'bot',
+      text: t.welcomeMessage,
+      timestamp: t.justNow,
+    },
+  ]);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // When language setting changes:
+  useEffect(() => {
+    setMessages((prev) => {
+      // If user hasn't started talking yet, switch the welcome message directly
+      if (prev.length === 1 && prev[0].id === 'welcome') {
+        return [
+          {
+            id: 'welcome',
+            sender: 'bot',
+            text: t.welcomeMessage,
+            timestamp: t.justNow,
+          },
+        ];
+      }
+      // If conversation is already underway, add a smooth multilingual notice from Juma
+      return [
+        ...prev,
+        {
+          id: `lang-switch-${Date.now()}`,
+          sender: 'bot',
+          text: t.welcomeMessage,
+          timestamp: t.justNow,
+        },
+      ];
+    });
+  }, [currentLang]);
 
   useEffect(() => {
     if (isOpen) {
@@ -46,23 +80,75 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
     }
   }, [isOpen, messages, isTyping]);
 
-  const quickPrompts = [
-    { label: '🏖️ Villa Availability', query: 'Tell me about available villas and rates.' },
-    { label: '🚗 Airport Transfer', query: 'How far is Zanzirangi House from Zanzibar Airport?' },
-    { label: '🍽️ Dining & Cuisine', query: 'What dining and restaurant options are available?' },
-    { label: '⛵ Excursions & Safari', query: 'What experiences and excursions can we arrange?' },
-    { label: '🕒 Check-in Times', query: 'What are the check-in and check-out times?' },
-  ];
-
   const generateBotReply = (userQuery: string): { text: string; action?: { label: string; onClick: () => void } } => {
     const q = userQuery.toLowerCase();
 
-    if (q.includes('villa') || q.includes('rate') || q.includes('price') || q.includes('stay') || q.includes('room') || q.includes('availab')) {
+    const villaKeywords = [
+      'villa', 'rate', 'price', 'stay', 'room', 'availab', 'suite',
+      'chambre', 'prix', 'tarif', 'nuit',
+      'bei', 'ghorofa', 'chumba', 'kulala',
+      'precio', 'tarifa', 'habitaci', 'estancia', 'noche',
+      'prezzo', 'costo', 'camera', 'notte',
+      'فلل', 'فيلا', 'سعر', 'اسعار', 'أسعار', 'غرفة', 'غرف', 'حجز', 'مسبح',
+      '别墅', '价格', '房价', '房型', '套房', '空房', '预订',
+    ];
+
+    const transferKeywords = [
+      'airport', 'transfer', 'location', 'where', 'car', 'distance', 'arrive', 'driver', 'taxi',
+      'aéroport', 'aeroport', 'transport', 'voiture', 'chauffeur',
+      'uwanja', 'ndege', 'usafiri', 'gari', 'umbali',
+      'aeropuerto', 'traslado', 'transporte', 'coche',
+      'aeroporto', 'trasferimento', 'auto',
+      'مطار', 'توصيل', 'نقل', 'سيارة', 'سائق', 'مسافة', 'موقع',
+      '机场', '接送', '专车', '距离', '怎么走', '位置',
+    ];
+
+    const diningKeywords = [
+      'din', 'food', 'restaurant', 'chef', 'breakfast', 'menu', 'lunch', 'dinner', 'eat', 'drink', 'wine', 'beverage', 'juice', 'cuisine',
+      'manger', 'nourriture', 'repas', 'boisson', 'petit-déjeuner', 'déjeuner',
+      'chakula', 'mgahawa', 'vinywaji', 'kula', 'kinywaji',
+      'comida', 'restaurante', 'cena', 'desayuno', 'bebida',
+      'cibo', 'ristorante', 'pranzo', 'bevande',
+      'مطعم', 'مطاعم', 'طعام', 'أكل', 'اكل', 'عشاء', 'غداء', 'إفطار', 'وجبة', 'مشروب', 'عصير', 'مشروبات',
+      '餐厅', '餐饮', '美食', '菜', '早餐', '晚餐', '饮料', '酒', '厨师',
+    ];
+
+    const excursionKeywords = [
+      'excursion', 'safari', 'dhow', 'activity', 'tour', 'dolphin', 'experience', 'trip', 'adventure',
+      'visite', 'croisière', 'dauphin', 'aventure', 'forêt',
+      'matembezi', 'pomboo', 'jahazi', 'msitu',
+      'excursión', 'excursion', 'delfines', 'paseo', 'selva',
+      'escursione', 'delfini', 'crociera', 'avventura',
+      'سفاري', 'رحلة', 'رحلات', 'قارب', 'داو', 'دلافين', 'غابة', 'أنشطة', 'نشاط',
+      '游览', '游猎', '萨伐旅', '海豚', '帆船', '活动', '探险', '森林',
+    ];
+
+    const checkinKeywords = [
+      'check-in', 'checkin', 'check in', 'checkout', 'check out', 'time', 'policy', 'hour',
+      'arrivée', 'arrivee', 'départ', 'depart', 'heure',
+      'kuingia', 'kuondoka', 'saa', 'muda',
+      'entrada', 'salida', 'horario', 'hora',
+      'arrivo', 'partenza', 'orario', 'ora',
+      'وصول', 'مغادرة', 'تسجيل', 'وقت', 'ساعة', 'ميعاد',
+      '入住', '退房', '时间', '几点',
+    ];
+
+    const contactKeywords = [
+      'contact', 'phone', 'email', 'support', 'call', 'number', 'help',
+      'téléphone', 'telephone', 'contacter', 'numéro',
+      'simu', 'mawasiliano', 'barua pepe',
+      'teléfono', 'telefono', 'contacto', 'llamar',
+      'contatto', 'chiamare',
+      'اتصال', 'هاتف', 'تواصل', 'رقم', 'ايميل', 'بريد',
+      '联系', '电话', '邮箱', '人工', '客服',
+    ];
+
+    if (villaKeywords.some((kw) => q.includes(kw))) {
       return {
-        text: `Zanzirangi House offers 8 private luxury villas including our flagship Royal Presidential Villa, Sultan Oceanfront Villa, and Swahili Garden Sanctuaries. Rates start from $320/night, all featuring private plunge pools, panoramic ocean views, and 24/7 dedicated butler service.`,
+        text: t.replies.villas,
         action: onOpenBooking
           ? {
-              label: 'Book a Villa Now',
+              label: t.bookAction,
               onClick: () => {
                 setIsOpen(false);
                 onOpenBooking();
@@ -72,41 +158,41 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
       };
     }
 
-    if (q.includes('airport') || q.includes('transfer') || q.includes('location') || q.includes('where') || q.includes('car')) {
+    if (transferKeywords.some((kw) => q.includes(kw))) {
       return {
-        text: `We are located along the serene southern coastline in Kizimkazi Dimbani, Zanzibar. Abeid Amani Karume International Airport (ZNZ) is approximately 55 minutes away. We provide luxury private chauffeur transfers upon request for all guests.`,
+        text: t.replies.transfer,
       };
     }
 
-    if (q.includes('din') || q.includes('food') || q.includes('restaurant') || q.includes('chef') || q.includes('breakfast') || q.includes('menu')) {
+    if (diningKeywords.some((kw) => q.includes(kw))) {
       return {
-        text: `Our oceanfront pavilion restaurant serves freshly caught Indian Ocean yellowfin tuna, king prawns, and authentic Swahili spice creations. Private in-villa dining and beach candlelit dinners can also be arranged with our executive chef.`,
+        text: t.replies.dining,
       };
     }
 
-    if (q.includes('excursion') || q.includes('safari') || q.includes('dhow') || q.includes('activity') || q.includes('tour') || q.includes('dolphin')) {
+    if (excursionKeywords.some((kw) => q.includes(kw))) {
       return {
-        text: `We curate bespoke private experiences including traditional sunset dhow sails, Menai Bay dolphin safaris, Jozani Forest colobus monkey visits, Stone Town heritage tours, and direct fly-in Serengeti safari expeditions.`,
+        text: t.replies.excursions,
       };
     }
 
-    if (q.includes('check-in') || q.includes('checkout') || q.includes('time') || q.includes('policy')) {
+    if (checkinKeywords.some((kw) => q.includes(kw))) {
       return {
-        text: `Standard check-in is from 14:00 (2:00 PM) and check-out is until 11:00 AM. Early check-in or late checkout can be accommodated complimentary based on villa availability.`,
+        text: t.replies.checkin,
       };
     }
 
-    if (q.includes('contact') || q.includes('phone') || q.includes('email') || q.includes('support')) {
+    if (contactKeywords.some((kw) => q.includes(kw))) {
       return {
-        text: `You can reach our 24/7 concierge team directly at ${PROPERTY_CONFIG.contact.phone} or via email at ${PROPERTY_CONFIG.contact.email}. We are always here to make your journey extraordinary.`,
+        text: t.replies.contact,
       };
     }
 
     return {
-      text: `Thank you for your inquiry regarding ${PROPERTY_CONFIG.name}. Our dedicated concierge team will be delighted to personalize your stay. Would you like to check availability for specific dates?`,
+      text: t.replies.fallback,
       action: onOpenBooking
         ? {
-            label: 'Check Villa Availability',
+            label: t.checkAvailAction,
             onClick: () => {
               setIsOpen(false);
               onOpenBooking();
@@ -131,7 +217,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
     setInputValue('');
     setIsTyping(true);
 
-    // Realistic bot response delay
+    // Natural concierge typing delay
     setTimeout(() => {
       const replyData = generateBotReply(messageText);
       const botMsg: Message = {
@@ -143,7 +229,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
       };
       setMessages((prev) => [...prev, botMsg]);
       setIsTyping(false);
-    }, 850);
+    }, 750);
   };
 
   return (
@@ -155,6 +241,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
       {isOpen && (
         <div
           id="chat-assistant-window"
+          dir={isRtl ? 'rtl' : 'ltr'}
           className="mb-3 w-[90vw] max-w-[390px] sm:w-[400px] h-[540px] max-h-[82vh] bg-[#141413] border border-[#2C2B28] text-[#FAF8F5] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-fadeIn"
           style={{
             boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(196, 162, 122, 0.15)',
@@ -162,9 +249,9 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
         >
           {/* Header */}
           <div className="px-5 py-4 bg-gradient-to-r from-[#1C1B1A] to-[#252422] border-b border-[#2C2B28] flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              {/* Host Avatar with pulse indicator */}
-              <div className="relative">
+            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+              {/* Host Avatar with pulsing green beacon */}
+              <div className="relative flex-shrink-0">
                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#C4A27A] bg-[#2C2B28]">
                   <img
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80"
@@ -178,16 +265,16 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
                 </span>
               </div>
 
-              <div className="flex flex-col text-left leading-tight">
-                <div className="flex items-center space-x-1.5">
+              <div className="flex flex-col text-left rtl:text-right leading-tight">
+                <div className="flex items-center space-x-1.5 rtl:space-x-reverse">
                   <span className="font-serif font-medium text-sm tracking-wider text-[#FAF8F5]">
-                    Customer Support
+                    {t.headerTitle}
                   </span>
                   <Sparkles className="w-3 h-3 text-[#C4A27A]" />
                 </div>
-                <span className="text-[10px] text-emerald-400 font-mono tracking-wider flex items-center space-x-1 mt-0.5">
+                <span className="text-[10px] text-emerald-400 font-mono tracking-wider flex items-center space-x-1 rtl:space-x-reverse mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                  <span>Aktif 24/7 • Respon Instan</span>
+                  <span>{t.headerStatus}</span>
                 </span>
               </div>
             </div>
@@ -207,9 +294,17 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+                className={`flex flex-col ${
+                  msg.sender === 'user'
+                    ? isRtl ? 'items-start' : 'items-end'
+                    : isRtl ? 'items-end' : 'items-start'
+                }`}
               >
-                <div className="flex items-end space-x-2 max-w-[85%]">
+                <div
+                  className={`flex items-end space-x-2 rtl:space-x-reverse max-w-[85%] ${
+                    msg.sender === 'user' ? 'flex-row-reverse space-x-reverse' : 'flex-row'
+                  }`}
+                >
                   {msg.sender === 'bot' && (
                     <div className="w-6 h-6 rounded-full bg-[#B8966C]/20 border border-[#C4A27A]/40 flex items-center justify-center flex-shrink-0 text-[#C4A27A] text-[10px]">
                       <Bot className="w-3.5 h-3.5" />
@@ -230,7 +325,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
                         onClick={msg.action.onClick}
                         className="mt-3 inline-flex items-center px-3 py-1.5 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] font-semibold text-[11px] uppercase tracking-wider rounded transition-all shadow"
                       >
-                        {msg.action.label} →
+                        {msg.action.label} {isRtl ? '←' : '→'}
                       </button>
                     )}
                   </div>
@@ -242,7 +337,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
             ))}
 
             {isTyping && (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <div className="w-6 h-6 rounded-full bg-[#B8966C]/20 border border-[#C4A27A]/40 flex items-center justify-center flex-shrink-0 text-[#C4A27A]">
                   <Bot className="w-3.5 h-3.5" />
                 </div>
@@ -257,8 +352,8 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
           </div>
 
           {/* Quick Questions Chips */}
-          <div className="px-3.5 py-2 bg-[#171615] border-t border-[#2C2B28] overflow-x-auto flex items-center space-x-2 no-scrollbar">
-            {quickPrompts.map((p, idx) => (
+          <div className="px-3.5 py-2 bg-[#171615] border-t border-[#2C2B28] overflow-x-auto flex items-center space-x-2 rtl:space-x-reverse no-scrollbar">
+            {t.quickPrompts.map((p, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSendMessage(p.query)}
@@ -275,13 +370,13 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
               e.preventDefault();
               handleSendMessage();
             }}
-            className="p-3 bg-[#1C1B1A] border-t border-[#2C2B28] flex items-center space-x-2"
+            className="p-3 bg-[#1C1B1A] border-t border-[#2C2B28] flex items-center space-x-2 rtl:space-x-reverse"
           >
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask anything about your stay..."
+              placeholder={t.inputPlaceholder}
               className="flex-1 bg-[#141413] border border-[#2C2B28] rounded-xl px-3.5 py-2.5 text-xs text-[#FAF8F5] placeholder-[#8C8880] focus:outline-none focus:border-[#C4A27A] transition-colors"
             />
             <button
@@ -290,7 +385,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
               className="p-2.5 bg-[#B8966C] hover:bg-[#C4A27A] disabled:opacity-40 disabled:cursor-not-allowed text-[#141413] rounded-xl transition-colors flex items-center justify-center flex-shrink-0"
               aria-label="Send message"
             >
-              <Send className="w-4 h-4" />
+              <Send className={`w-4 h-4 ${isRtl ? 'rotate-180' : ''}`} />
             </button>
           </form>
         </div>
@@ -336,14 +431,14 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ onOpenBooking }) =
         <div className="flex items-center space-x-2 px-3.5 sm:px-4 py-2 bg-[#141413]/95 hover:bg-[#1C1B1A] border border-[#C4A27A]/40 rounded-2xl text-[#FAF8F5] shadow-2xl backdrop-blur-md transition-all duration-300 group-hover:border-[#C4A27A]">
           <div className="flex flex-col text-left leading-tight">
             <span className="text-xs font-semibold text-[#FAF8F5] tracking-wide">
-              Customer Support
+              {t.badgeTitle}
             </span>
             <span className="text-[10px] text-emerald-400 font-mono tracking-wider flex items-center space-x-1.5 mt-0.5 font-medium">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span>Aktif 24/7</span>
+              <span>{t.badgeStatus}</span>
             </span>
           </div>
         </div>

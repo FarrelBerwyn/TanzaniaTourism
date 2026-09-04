@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Globe, Calendar, Settings } from 'lucide-react';
+import { Menu, X, Globe, Calendar } from 'lucide-react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { PROPERTY_CONFIG } from '../data/propertyConfig';
+import logoImg from './zanzirangi-house-logo.jpg';
 
 interface NavbarProps {
   currentLang: Language;
   onSelectLang: (lang: Language) => void;
   onOpenBooking: (villaId?: string) => void;
-  onOpenCmsPitch: () => void;
+  onOpenCmsPitch?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -65,17 +66,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between">
-          {/* Brand Logo */}
+          {/* Brand Logo & Name */}
           <a
             href="#"
             id="nav-brand-logo"
-            className="flex flex-col tracking-wider group focus:outline-none"
+            className="flex items-center space-x-3 tracking-wider group focus:outline-none"
           >
+            <img
+              src={logoImg}
+              alt="Zanzirangi House Logo"
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full object-cover border border-[#C4A27A]/50 shadow-md group-hover:scale-105 group-hover:border-[#C4A27A] transition-all duration-300 flex-shrink-0"
+            />
             <span className="font-serif text-xl sm:text-2xl md:text-[26px] tracking-[0.18em] text-[#FAF8F5] uppercase transition-colors duration-300 group-hover:text-[#C4A27A]">
               {PROPERTY_CONFIG.name}
-            </span>
-            <span className="text-[9px] sm:text-[10px] tracking-[0.32em] text-[#D8CCB8]/80 uppercase">
-              Zanzibar • Tanzania
             </span>
           </a>
 
@@ -138,17 +141,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* Pitching: CMS Demo Toggle */}
-            <button
-              id="cms-demo-nav-button"
-              onClick={onOpenCmsPitch}
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-[11px] tracking-widest uppercase rounded border border-[#C4A27A]/40 text-[#D8CCB8] hover:bg-[#C4A27A]/15 hover:text-[#FAF8F5] transition-all"
-              title="Preview Client Admin & CMS Capability"
-            >
-              <Settings className="w-3.5 h-3.5 text-[#C4A27A]" />
-              <span>{t.nav.cmsPitch}</span>
-            </button>
-
             {/* Book Now Button */}
             <button
               id="header-book-button"
@@ -189,9 +181,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="fixed inset-0 bg-[#141413]/98 z-40 lg:hidden flex flex-col justify-between pt-24 pb-12 px-8 backdrop-blur-xl animate-fadeIn"
         >
           <div className="flex flex-col space-y-6 text-center">
-            <span className="font-serif text-2xl tracking-[0.15em] text-[#C4A27A] uppercase mb-4">
-              {PROPERTY_CONFIG.name}
-            </span>
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <img
+                src={logoImg}
+                alt="Zanzirangi House Logo"
+                className="w-10 h-10 rounded-full object-cover border border-[#C4A27A]/50 shadow-sm flex-shrink-0"
+              />
+              <span className="font-serif text-2xl tracking-[0.15em] text-[#C4A27A] uppercase">
+                {PROPERTY_CONFIG.name}
+              </span>
+            </div>
 
             {navLinks.map((link) => (
               <a
@@ -203,16 +202,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {link.label}
               </a>
             ))}
-
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenCmsPitch();
-              }}
-              className="text-xs tracking-[0.2em] uppercase text-[#D8CCB8] py-2 border border-[#C4A27A]/30 rounded self-center px-6 mt-4"
-            >
-              ⚙ {t.nav.cmsPitch}
-            </button>
           </div>
 
           <div className="flex flex-col items-center space-y-6">

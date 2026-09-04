@@ -161,7 +161,10 @@ export default function App() {
       />
 
       {/* Customer Support Chat Assistant in Bottom Left Corner */}
-      <ChatAssistant onOpenBooking={() => handleOpenBooking()} />
+      <ChatAssistant
+        currentLang={currentLang}
+        onOpenBooking={() => handleOpenBooking()}
+      />
 
       {/* Villa Detail Modal */}
       {selectedVillaForDetail && (
