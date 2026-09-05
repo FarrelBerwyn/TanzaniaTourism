@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Calendar, CheckSquare, Square, MessageSquare, ArrowRight, Sparkles, MapPin, Clock } from 'lucide-react';
+import { Calendar, CheckSquare, Square, MessageSquare, ArrowRight, Sparkles, Clock } from 'lucide-react';
 import { Language } from '../types';
-import { SAMPLE_ITINERARY } from '../data/itinerary';
+import {
+  getLocalizedSampleItinerary,
+  ITINERARY_UI_TRANSLATIONS,
+} from '../data/itineraryTranslations';
 import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface CustomItinerarySectionProps {
@@ -13,8 +16,11 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
   currentLang,
   onOpenSupportChat,
 }) => {
+  const ui = ITINERARY_UI_TRANSLATIONS[currentLang] || ITINERARY_UI_TRANSLATIONS.en;
+  const itinerary = getLocalizedSampleItinerary(currentLang);
+
   // Initialize with all activity IDs selected
-  const allInitialIds = SAMPLE_ITINERARY.flatMap((day) => day.activities.map((a) => a.id));
+  const allInitialIds = itinerary.flatMap((day) => day.activities.map((a) => a.id));
   const [selectedIds, setSelectedIds] = useState<string[]>(allInitialIds);
   const [activeDayIdx, setActiveDayIdx] = useState<number>(0);
 
@@ -32,10 +38,22 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
     setSelectedIds([]);
   };
 
-  const activeDay = SAMPLE_ITINERARY[activeDayIdx];
+  const activeDay = itinerary[activeDayIdx] || itinerary[0];
+
+  const toggleAriaPrefixes: Record<Language, string> = {
+    en: 'Toggle',
+    pl: 'Przełącz',
+    ar: 'تبديل',
+    zh: '切换',
+    fr: 'Basculer',
+    sw: 'Badilisha',
+    es: 'Alternar',
+    it: 'Attiva/Disattiva',
+  };
+  const togglePrefix = toggleAriaPrefixes[currentLang] || toggleAriaPrefixes.en;
 
   const handleRequestItinerary = () => {
-    const prompt = `Hello Zanzirangi House Concierge, I have selected ${selectedIds.length} experiences across my custom 8-day Tanzania itinerary (including Day ${activeDay.dayNumber}: ${activeDay.dayTitle}). Could your team help arrange this bespoke journey?`;
+    const prompt = `${ui.whatsappGreeting}\n- ${selectedIds.length} ${ui.selectedCount}\n${ui.whatsappClosing}`;
     if (onOpenSupportChat) {
       onOpenSupportChat(prompt);
     } else {
@@ -50,22 +68,22 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
           <div className="inline-flex items-center space-x-2.5 text-[11px] tracking-[0.32em] uppercase text-[#A07E54] font-semibold mb-3">
             <Calendar className="w-3.5 h-3.5" />
-            <span>Curated Multi-Day Design</span>
+            <span>{ui.eyebrow}</span>
           </div>
 
           <h2
             id="itinerary-heading"
             className="font-serif text-3xl sm:text-5xl md:text-6xl font-light tracking-[0.04em] uppercase text-[#141413] mb-4"
           >
-            BUILD YOUR TANZANIA JOURNEY
+            {ui.heading}
           </h2>
 
           <p className="font-serif italic text-xl sm:text-2xl text-[#8E6B40] font-light mb-4">
-            An interconnected journey from barefoot ocean sanctuary to the wild Serengeti.
+            "{ui.badge}"
           </p>
 
           <p className="text-sm md:text-base text-[#6B6862] leading-relaxed max-w-2xl mx-auto">
-            Select your preferred experiences below to customize a seamless East African journey. When ready, request your bespoke schedule directly through our concierge team.
+            {ui.subhead}
           </p>
         </div>
 
@@ -77,11 +95,11 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
           rightGradientClass="bg-gradient-to-l from-[#FAF8F5] via-[#FAF8F5]/90 to-transparent"
           bottomOffset="bottom-4"
         >
-          {SAMPLE_ITINERARY.map((day, idx) => (
+          {itinerary.map((day, idx) => (
             <button
               key={day.dayNumber}
               onClick={() => setActiveDayIdx(idx)}
-              className={`px-5 py-3 rounded-xl transition-all duration-300 flex flex-col items-center flex-shrink-0 text-left md:text-center ${
+              className={`px-5 py-3 rounded-xl transition-all duration-300 flex flex-col items-center flex-shrink-0 text-left md:text-center cursor-pointer ${
                 activeDayIdx === idx
                   ? 'bg-[#1C1B1A] text-[#FAF8F5] shadow-xl'
                   : 'bg-[#F4EFE6] text-[#6B6862] hover:bg-[#E7DFD2]'
@@ -112,16 +130,16 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
             <div className="flex items-center space-x-3 text-xs font-mono">
               <button
                 onClick={handleSelectAll}
-                className="text-[#A07E54] hover:underline"
+                className="text-[#A07E54] hover:underline cursor-pointer"
               >
-                Select All
+                {ui.selectAllBtn}
               </button>
               <span>•</span>
               <button
                 onClick={handleClearAll}
-                className="text-[#6B6862] hover:underline"
+                className="text-[#6B6862] hover:underline cursor-pointer"
               >
-                Clear
+                {ui.clearAllBtn}
               </button>
             </div>
           </div>
@@ -143,7 +161,7 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
                   <button
                     type="button"
                     className="mt-1 text-[#A07E54] flex-shrink-0 focus:outline-none"
-                    aria-label={`Toggle ${act.title}`}
+                    aria-label={`${togglePrefix} ${act.title}`}
                   >
                     {isChecked ? (
                       <CheckSquare className="w-5 h-5 fill-[#B8966C] text-[#FAF8F5]" />
@@ -175,13 +193,13 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
           <div className="max-w-xl space-y-2 text-center md:text-left">
             <div className="inline-flex items-center space-x-2 text-[10px] font-mono tracking-widest uppercase text-[#C4A27A]">
               <Sparkles className="w-3 h-3" />
-              <span>{selectedIds.length} Experiences Selected Across 8 Days</span>
+              <span>{selectedIds.length} {ui.selectedCount}</span>
             </div>
             <h3 className="font-serif text-2xl sm:text-3xl text-[#FAF8F5] font-light">
-              Create Your Complete Tanzania Journey
+              {ui.heading}
             </h3>
             <p className="text-xs sm:text-sm text-[#D8CCB8]">
-              Send your tailored itinerary directly to the Zanzirangi House customer support and concierge team. We will confirm dates, chartered flights, villa choices, and private guide reservations.
+              {ui.subhead}
             </p>
           </div>
 
@@ -190,7 +208,7 @@ export const CustomItinerarySection: React.FC<CustomItinerarySectionProps> = ({
             className="w-full md:w-auto px-9 py-4 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-bold tracking-[0.2em] uppercase rounded-full flex items-center justify-center space-x-2.5 transition-all shadow-xl active:scale-95 flex-shrink-0 cursor-pointer"
           >
             <MessageSquare className="w-4 h-4" />
-            <span>REQUEST THIS ITINERARY</span>
+            <span>{ui.customizeCta}</span>
           </button>
         </div>
       </div>

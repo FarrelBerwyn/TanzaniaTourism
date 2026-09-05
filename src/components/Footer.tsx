@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, ArrowUp, Instagram, Facebook, Youtube, Settings, MessageSquare, Phone, Mail, MapPin, Calendar } from 'lucide-react';
+import { ArrowUp, Instagram, Facebook, Youtube, Settings, MessageSquare, Calendar } from 'lucide-react';
 import { Language } from '../types';
 import { PROPERTY_CONFIG } from '../data/propertyConfig';
 import { TRANSLATIONS } from '../data/translations';
@@ -9,6 +9,137 @@ const TikTokIcon: React.FC<{ className?: string }> = ({ className = 'w-3.5 h-3.5
     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.47 6.27 6.27 0 0 0 1.95-4.47V8.58a8.27 8.27 0 0 0 4.82 1.55V6.69z" />
   </svg>
 );
+
+const FOOTER_EXTRA_TRANSLATIONS: Record<
+  Language,
+  {
+    planStay: string;
+    cmsDemo: string;
+    languagesLabel: string;
+    socialLabel: string;
+    reservations: string;
+    customerSupport: string;
+    liveSupport: string;
+    email: string;
+    location: string;
+    locationAddress: string;
+    top: string;
+    supportPrompt: string;
+  }
+> = {
+  en: {
+    planStay: 'PLAN YOUR STAY',
+    cmsDemo: 'Client CMS & Admin Demo',
+    languagesLabel: 'Languages',
+    socialLabel: 'Social Media',
+    reservations: 'Reservations:',
+    customerSupport: 'Customer Support:',
+    liveSupport: 'Live Support • Juma (Online)',
+    email: 'Email:',
+    location: 'Location:',
+    locationAddress: 'Kizimkazi Dimbani, South Coast, Zanzibar, Tanzania',
+    top: 'Top',
+    supportPrompt: 'Hello Zanzirangi House Customer Support! I would like to inquire about availability and planning our stay.',
+  },
+  pl: {
+    planStay: 'ZAPLANUJ POBYT',
+    cmsDemo: 'Panel CMS i Demo Klienta',
+    languagesLabel: 'Języki',
+    socialLabel: 'Media Społecznościowe',
+    reservations: 'Rezerwacje:',
+    customerSupport: 'Wsparcie Klienta:',
+    liveSupport: 'Wsparcie na żywo • Juma (Online)',
+    email: 'Email:',
+    location: 'Lokalizacja:',
+    locationAddress: 'Kizimkazi Dimbani, Południowe Wybrzeże, Zanzibar, Tanzania',
+    top: 'Góra',
+    supportPrompt: 'Dzień dobry, Zanzirangi House! Chciałbym zapytać o dostępność willi i zaplanowanie pobytu.',
+  },
+  ar: {
+    planStay: 'خطط لإقامتك',
+    cmsDemo: 'لوحة التحكم والعرض التجريبي',
+    languagesLabel: 'اللغات',
+    socialLabel: 'وسائل التواصل',
+    reservations: 'الحجوزات:',
+    customerSupport: 'خدمة العملاء:',
+    liveSupport: 'دعم مباشر • جمعة (متصل)',
+    email: 'البريد الإلكتروني:',
+    location: 'الموقع:',
+    locationAddress: 'كيزيمكازي ديمباني، الساحل الجنوبي، زنجبار، تنزانيا',
+    top: 'للأعلى',
+    supportPrompt: 'مرحباً خدمة عملاء زانزيرانجي هاوس! أود الاستفسار عن التوافر وتخطيط إقامتنا.',
+  },
+  zh: {
+    planStay: '规划您的入住',
+    cmsDemo: '管理后台演示',
+    languagesLabel: '语言选择',
+    socialLabel: '关注我们',
+    reservations: '预订专线:',
+    customerSupport: '客户服务:',
+    liveSupport: '在线客服 • Juma（在线）',
+    email: '电子邮箱:',
+    location: '地理位置:',
+    locationAddress: '坦桑尼亚桑给巴尔南海岸 Kizimkazi Dimbani',
+    top: '返回顶部',
+    supportPrompt: '您好 Zanzirangi House 客服团队！我想咨询预订空房并规划我们的桑给巴尔之旅。',
+  },
+  fr: {
+    planStay: 'PLANIFIEZ VOTRE SÉJOUR',
+    cmsDemo: 'Démonstration CMS & Admin',
+    languagesLabel: 'Langues',
+    socialLabel: 'Réseaux Sociaux',
+    reservations: 'Réservations :',
+    customerSupport: 'Support Client :',
+    liveSupport: 'Support en direct • Juma (En ligne)',
+    email: 'Courriel :',
+    location: 'Emplacement :',
+    locationAddress: 'Kizimkazi Dimbani, Côte Sud, Zanzibar, Tanzanie',
+    top: 'Haut',
+    supportPrompt: 'Bonjour le service client de Zanzirangi House ! Je souhaite me renseigner sur les disponibilités pour notre séjour.',
+  },
+  sw: {
+    planStay: 'PANGA KUKAA KWAKO',
+    cmsDemo: 'Onyesho la Mfumo wa Usimamizi (CMS)',
+    languagesLabel: 'Lugha',
+    socialLabel: 'Mitandao ya Kijamii',
+    reservations: 'Uhifadhi:',
+    customerSupport: 'Huduma kwa Wateja:',
+    liveSupport: 'Msaada wa Moja kwa Moja • Juma (Yuko Mtandaoni)',
+    email: 'Barua pepe:',
+    location: 'Mahali:',
+    locationAddress: 'Kizimkazi Dimbani, Pwani ya Kusini, Zanzibar, Tanzania',
+    top: 'Juu',
+    supportPrompt: 'Habari Huduma kwa Wateja Zanzirangi House! Ningependa kuulizia kuhusu nafasi na kupanga kukaa kwetu.',
+  },
+  es: {
+    planStay: 'PLANIFIQUE SU ESTANCIA',
+    cmsDemo: 'Demostración de Panel CMS',
+    languagesLabel: 'Idiomas',
+    socialLabel: 'Redes Sociales',
+    reservations: 'Reservas:',
+    customerSupport: 'Atención al Cliente:',
+    liveSupport: 'Soporte en directo • Juma (En línea)',
+    email: 'Correo:',
+    location: 'Ubicación:',
+    locationAddress: 'Kizimkazi Dimbani, Costa Sur, Zanzíbar, Tanzania',
+    top: 'Arriba',
+    supportPrompt: '¡Hola equipo de atención de Zanzirangi House! Me gustaría consultar sobre disponibilidad y planificar nuestra estancia.',
+  },
+  it: {
+    planStay: 'PIANIFICA IL TUO SOGGIORNO',
+    cmsDemo: 'Demo CMS e Gestione',
+    languagesLabel: 'Lingue',
+    socialLabel: 'Social Media',
+    reservations: 'Prenotazioni:',
+    customerSupport: 'Servizio Clienti:',
+    liveSupport: 'Supporto Live • Juma (Online)',
+    email: 'Email:',
+    location: 'Posizione:',
+    locationAddress: 'Kizimkazi Dimbani, Costa Sud, Zanzibar, Tanzania',
+    top: 'Inizio',
+    supportPrompt: 'Salve assistenza clienti Zanzirangi House! Vorrei informazioni sulla disponibilità e sulla pianificazione del nostro soggiorno.',
+  },
+};
 
 interface FooterProps {
   currentLang: Language;
@@ -26,19 +157,20 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenSupportChat,
 }) => {
   const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  const extra = FOOTER_EXTRA_TRANSLATIONS[currentLang] || FOOTER_EXTRA_TRANSLATIONS.en;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navLinks = [
-    { label: 'Stay', href: '#stay' },
-    { label: 'Experiences', href: '#experiences' },
-    { label: 'Dining', href: '#dining' },
-    { label: 'Explore', href: '#explore' },
-    { label: 'Concierge', href: '#concierge' },
-    { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#location' },
+    { label: t.nav.stay, href: '#stay' },
+    { label: t.nav.experiences, href: '#experiences' },
+    { label: t.nav.dining, href: '#dining' },
+    { label: t.nav.explore, href: '#explore' },
+    { label: t.nav.concierge, href: '#concierge' },
+    { label: t.nav.about, href: '#about' },
+    { label: t.nav.contact, href: '#location' },
   ];
 
   const languages: { code: Language; label: string }[] = [
@@ -66,17 +198,17 @@ export const Footer: React.FC<FooterProps> = ({
               Zanzibar • Tanzania
             </span>
             <p className="text-xs sm:text-sm text-[#D8CCB8]/80 leading-relaxed max-w-sm">
-              A private luxury hospitality property and gateway to Zanzibar island adventures, authentic gastronomy, and mainland Tanzania safaris.
+              {t.footer.brandStatement}
             </p>
 
             {/* Plan Your Stay CTA Button */}
             <div className="pt-2">
               <button
                 onClick={onOpenBooking}
-                className="px-6 py-3 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-bold tracking-[0.2em] uppercase rounded transition-all shadow-md active:scale-95 flex items-center space-x-2"
+                className="px-6 py-3 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-bold tracking-[0.2em] uppercase rounded transition-all shadow-md active:scale-95 flex items-center space-x-2 cursor-pointer"
               >
                 <Calendar className="w-3.5 h-3.5" />
-                <span>PLAN YOUR STAY</span>
+                <span>{extra.planStay}</span>
               </button>
             </div>
 
@@ -84,10 +216,10 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="pt-2">
               <button
                 onClick={onOpenCmsPitch}
-                className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#1C1B1A] border border-[#C4A27A]/30 rounded text-[10px] uppercase font-mono tracking-wider text-[#D8CCB8] hover:border-[#C4A27A] transition-colors"
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#1C1B1A] border border-[#C4A27A]/30 rounded text-[10px] uppercase font-mono tracking-wider text-[#D8CCB8] hover:border-[#C4A27A] transition-colors cursor-pointer"
               >
                 <Settings className="w-3 h-3 text-[#C4A27A]" />
-                <span>Client CMS & Admin Demo</span>
+                <span>{extra.cmsDemo}</span>
               </button>
             </div>
           </div>
@@ -95,7 +227,7 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Quick Navigation Links */}
           <div className="lg:col-span-3 space-y-3">
             <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#A07E54] block mb-2">
-              Navigation
+              {t.footer.quickLinks}
             </span>
             <ul className="space-y-2.5 text-xs tracking-wider uppercase text-[#D8CCB8]/90">
               {navLinks.map((link) => (
@@ -111,21 +243,21 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Concierge & Inquiries */}
           <div className="lg:col-span-3 space-y-3">
             <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#A07E54] block mb-2">
-              Concierge & Contact
+              {t.footer.contactConcierge}
             </span>
             <div className="space-y-2.5 text-xs text-[#D8CCB8]/90 font-mono">
               <p>
-                <span className="text-[10px] text-[#6B6862] block">Reservations:</span>
+                <span className="text-[10px] text-[#6B6862] block">{extra.reservations}</span>
                 <a href={`tel:${PROPERTY_CONFIG.phone}`} className="hover:text-[#C4A27A]">
                   {PROPERTY_CONFIG.phone}
                 </a>
               </p>
               <p>
-                <span className="text-[10px] text-[#6B6862] block">Customer Support:</span>
+                <span className="text-[10px] text-[#6B6862] block">{extra.customerSupport}</span>
                 <button
                   type="button"
                   onClick={() => {
-                    const prompt = 'Hello Zanzirangi House Customer Support! I would like to inquire about availability and planning our stay.';
+                    const prompt = extra.supportPrompt;
                     if (onOpenSupportChat) {
                       onOpenSupportChat(prompt);
                     } else {
@@ -135,19 +267,19 @@ export const Footer: React.FC<FooterProps> = ({
                   className="hover:text-emerald-300 text-emerald-400 font-semibold flex items-center space-x-1.5 cursor-pointer text-left transition-colors pt-0.5"
                 >
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                  <span>Live Support • Juma (Online)</span>
+                  <span>{extra.liveSupport}</span>
                 </button>
               </p>
               <p>
-                <span className="text-[10px] text-[#6B6862] block">Email:</span>
+                <span className="text-[10px] text-[#6B6862] block">{extra.email}</span>
                 <a href={`mailto:${PROPERTY_CONFIG.email}`} className="hover:text-[#C4A27A]">
                   {PROPERTY_CONFIG.email}
                 </a>
               </p>
               <p>
-                <span className="text-[10px] text-[#6B6862] block">Location:</span>
+                <span className="text-[10px] text-[#6B6862] block">{extra.location}</span>
                 <span className="text-[#D8CCB8]/80 text-[11px]">
-                  Kizimkazi Dimbani, South Coast, Zanzibar, Tanzania
+                  {extra.locationAddress}
                 </span>
               </p>
             </div>
@@ -156,14 +288,14 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Social & Language */}
           <div className="lg:col-span-2 space-y-4">
             <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#A07E54] block">
-              Languages
+              {extra.languagesLabel}
             </span>
             <div className="flex flex-col space-y-1 text-xs">
               {languages.map((l) => (
                 <button
                   key={l.code}
                   onClick={() => onSelectLang(l.code)}
-                  className={`text-left py-0.5 transition-colors ${
+                  className={`text-left py-0.5 transition-colors cursor-pointer ${
                     currentLang === l.code
                       ? 'text-[#C4A27A] font-semibold'
                       : 'text-[#D8CCB8]/60 hover:text-[#FAF8F5]'
@@ -175,7 +307,7 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
 
             <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#A07E54] block pt-2">
-              Social Media
+              {extra.socialLabel}
             </span>
             <div className="pt-1 flex items-center space-x-2.5">
               <a
@@ -225,7 +357,7 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Bottom Sub-Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#6B6862] gap-4">
           <p className="text-center sm:text-left">
-            © {new Date().getFullYear()} {PROPERTY_CONFIG.name}. All Rights Reserved.
+            © {new Date().getFullYear()} {PROPERTY_CONFIG.name}. {t.footer.allRightsReserved}
           </p>
 
           <p className="text-[11px] font-mono text-[#A07E54] text-center">
@@ -234,9 +366,9 @@ export const Footer: React.FC<FooterProps> = ({
 
           <button
             onClick={scrollToTop}
-            className="flex items-center space-x-1.5 text-xs tracking-wider uppercase text-[#D8CCB8] hover:text-white transition-colors"
+            className="flex items-center space-x-1.5 text-xs tracking-wider uppercase text-[#D8CCB8] hover:text-white transition-colors cursor-pointer"
           >
-            <span>Top</span>
+            <span>{extra.top}</span>
             <ArrowUp className="w-3.5 h-3.5" />
           </button>
         </div>

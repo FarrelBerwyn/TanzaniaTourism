@@ -28,14 +28,85 @@ import { BookingModal } from './components/BookingModal';
 import { ChatAssistant } from './components/ChatAssistant';
 import { CmsAdminModal } from './components/CmsAdminModal';
 
+const SEO_TRANSLATIONS: Record<Language, { title: string; description: string }> = {
+  en: {
+    title: 'Zanzirangi House | Luxury Stay & Tanzania Experiences',
+    description: 'Discover Zanzirangi House — a private luxury sanctuary in Zanzibar with curated island experiences, dining, tours, safari connections and personalized concierge services.',
+  },
+  pl: {
+    title: 'Zanzirangi House | Luksusowy Pobyt i Niezapomniane Safari w Tanzanii',
+    description: 'Odkryj Zanzirangi House — prywatną luksusową oazę na Zanzibarze z unikalnymi atrakcjami wyspy, wykwintną kuchnią, wyprawami safari i osobistą opieką konsjerża.',
+  },
+  ar: {
+    title: 'منزل زنجيرانجي | إقامة فاخرة وتجارب تنزانيا الاستثنائية',
+    description: 'اكتشف منزل زنجيرانجي — ملاذ فاخر خاص في زنجبار مع تجارب جزرية منتقاة، ومطاعم راقية، وجولات سياحية، ورحلات سفاري، وخدمات كونسيرج مخصصة.',
+  },
+  zh: {
+    title: 'Zanzirangi House 赞齐兰吉私邸 | 桑给巴尔奢华度假与坦桑尼亚探索之旅',
+    description: '探索 Zanzirangi House — 隐匿于桑给巴尔的顶级私人奢华避世谧境，尽享定制海岛体验、珍馐美馔、陆地猎游连接与 24/7 私人管家尊贵服务。',
+  },
+  fr: {
+    title: 'Zanzirangi House | Séjour de Luxe & Expériences en Tanzanie',
+    description: 'Découvrez Zanzirangi House — un sanctuaire de luxe privé à Zanzibar avec des expériences insulaires sur mesure, gastronomie, excursions, safaris et conciergerie dédiée.',
+  },
+  sw: {
+    title: 'Zanzirangi House | Malazi ya Kifahari & Safari za Tanzania',
+    description: 'Gundua Zanzirangi House — makazi ya kifahari na amani huko Zanzibar yenye uzoefu wa kipekee wa kisiwa, chakula bora, safari za wanyama, na huduma binafsi za kiongozi.',
+  },
+  es: {
+    title: 'Zanzirangi House | Estancia de Lujo y Experiencias en Tanzania',
+    description: 'Descubra Zanzirangi House — un santuario privado de lujo en Zanzíbar con exclusivas experiencias isleñas, gastronomía, excursiones, safaris y conserjería personalizada.',
+  },
+  it: {
+    title: 'Zanzirangi House | Soggiorno di Lusso ed Esperienze in Tanzania',
+    description: 'Scoprite Zanzirangi House — un esclusivo rifugio di lusso a Zanzibar con esperienze sull’isola su misura, alta cucina, tour, safari e servizio concierge dedicato.',
+  },
+};
+
 export default function App() {
-  // Global State
-  const [currentLang, setCurrentLang] = useState<Language>('en');
+  // Global State with localStorage persistence
+  const [currentLang, setCurrentLang] = useState<Language>(() => {
+    try {
+      const saved = localStorage.getItem('zanzirangi_lang') as Language;
+      if (saved && ['en', 'fr', 'sw', 'es', 'it', 'pl', 'ar', 'zh'].includes(saved)) {
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+    return 'en';
+  });
+
   const [villas, setVillas] = useState<Villa[]>(VILLAS_DATA);
+
+  const handleSelectLanguage = (lang: Language) => {
+    setCurrentLang(lang);
+    try {
+      localStorage.setItem('zanzirangi_lang', lang);
+    } catch {
+      // ignore
+    }
+  };
 
   useEffect(() => {
     document.documentElement.lang = currentLang;
     document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+    const seo = SEO_TRANSLATIONS[currentLang] || SEO_TRANSLATIONS.en;
+    document.title = seo.title;
+
+    const updateMeta = (selector: string, content: string) => {
+      const el = document.querySelector(selector);
+      if (el) {
+        el.setAttribute('content', content);
+      }
+    };
+
+    updateMeta('meta[name="description"]', seo.description);
+    updateMeta('meta[property="og:title"]', seo.title);
+    updateMeta('meta[property="og:description"]', seo.description);
+    updateMeta('meta[name="twitter:title"]', seo.title);
+    updateMeta('meta[name="twitter:description"]', seo.description);
   }, [currentLang]);
 
   // Modals State
@@ -94,7 +165,7 @@ export default function App() {
       {/* 00: Fixed Luxury Navigation Header */}
       <Navbar
         currentLang={currentLang}
-        onSelectLang={setCurrentLang}
+        onSelectLang={handleSelectLanguage}
         onOpenBooking={handleOpenBooking}
         onOpenCmsPitch={() => setCmsPitchModalOpen(true)}
       />

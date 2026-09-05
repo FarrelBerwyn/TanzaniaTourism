@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Users, Home, ArrowRight, ChevronDown } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import { VILLAS_DATA } from '../data/villas';
@@ -47,19 +48,41 @@ export const QuickBookingBar: React.FC<QuickBookingBarProps> = ({
 
   const selectedVillaObj = VILLAS_DATA.find((v) => v.id === selectedVillaId);
 
+  const toggleLabels: Record<Language, { close: string; checkDates: string }> = {
+    en: { close: 'Close', checkDates: 'Check Dates' },
+    pl: { close: 'Zamknij', checkDates: 'Sprawdź Terminy' },
+    ar: { close: 'إغلاق', checkDates: 'تحقق من التواريخ' },
+    zh: { close: '收起', checkDates: '查看日期' },
+    fr: { close: 'Fermer', checkDates: 'Vérifier les dates' },
+    sw: { close: 'Funga', checkDates: 'Angalia Tarehe' },
+    es: { close: 'Cerrar', checkDates: 'Consultar Fechas' },
+    it: { close: 'Chiudi', checkDates: 'Verifica Date' },
+  };
+  const toggle = toggleLabels[currentLang] || toggleLabels.en;
+
   return (
-    <div
-      id="quick-booking-bar-wrapper"
-      className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-14"
+    <section
+      id="quick-booking"
+      className="bg-[#FAF8F5] pt-10 sm:pt-14 md:pt-16 pb-4 sm:pb-6 relative z-20"
     >
-      <div className="bg-[#1C1B1A] border border-[#2C2B28] rounded-2xl sm:rounded-xl shadow-2xl p-3.5 sm:p-6 backdrop-blur-xl transition-all duration-300">
+      <div
+        id="quick-booking-bar-wrapper"
+        className="max-w-6xl mx-auto px-4 sm:px-6"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          className="bg-[#1C1B1A] border border-[#2C2B28] rounded-2xl sm:rounded-xl shadow-2xl p-3.5 sm:p-6 backdrop-blur-xl transition-all duration-300"
+        >
         {/* Mobile Format: Collapse / Expand Header Button */}
         <button
           type="button"
           id="mobile-quick-booking-toggle"
           onClick={() => setIsMobileExpanded(!isMobileExpanded)}
           aria-expanded={isMobileExpanded}
-          className="sm:hidden w-full flex items-center justify-between p-1 focus:outline-none text-left"
+          className="sm:hidden w-full flex items-center justify-between p-1 focus:outline-none text-left cursor-pointer"
         >
           <div className="flex items-center space-x-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-[#B8966C]/20 border border-[#C4A27A]/40 flex items-center justify-center text-[#C4A27A] flex-shrink-0 shadow-inner">
@@ -81,7 +104,7 @@ export const QuickBookingBar: React.FC<QuickBookingBarProps> = ({
           </div>
 
           <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#B8966C]/20 border border-[#C4A27A]/40 rounded-xl text-xs font-semibold text-[#C4A27A] flex-shrink-0 ml-2 shadow-sm">
-            <span>{isMobileExpanded ? 'Tutup' : 'Check Dates'}</span>
+            <span>{isMobileExpanded ? toggle.close : toggle.checkDates}</span>
             <ChevronDown
               className={`w-4 h-4 transform transition-transform duration-300 ${
                 isMobileExpanded ? 'rotate-180' : ''
@@ -199,7 +222,8 @@ export const QuickBookingBar: React.FC<QuickBookingBarProps> = ({
             </button>
           </div>
         </form>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { Language } from '../types';
-import { FACILITIES_DATA } from '../data/facilities';
+import { getLocalizedFacilities } from '../data/facilitiesTranslations';
 import { TRANSLATIONS } from '../data/translations';
 
 interface FacilitiesSectionProps {
@@ -9,11 +9,25 @@ interface FacilitiesSectionProps {
 }
 
 export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({ currentLang }) => {
-  const t = TRANSLATIONS[currentLang];
-  const [activeFacilityId, setActiveFacilityId] = useState(FACILITIES_DATA[0].id);
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  const facilities = getLocalizedFacilities(currentLang);
+  const [activeFacilityId, setActiveFacilityId] = useState(facilities[0].id);
 
   const activeFacility =
-    FACILITIES_DATA.find((f) => f.id === activeFacilityId) || FACILITIES_DATA[0];
+    facilities.find((f) => f.id === activeFacilityId) || facilities[0];
+
+  const eyebrows: Record<Language, string> = {
+    en: 'Curated Estate Amenities',
+    fr: 'Équipements & Prestations du Domaine',
+    sw: 'Huduma Maalum za Hoteli',
+    es: 'Instalaciones y Servicios de la Finca',
+    it: 'Servizi e Strutture della Tenuta',
+    pl: 'Udogodnienia i Przestrzenie Posiadłości',
+    ar: 'مرافق وخدمات المنتجع المختارة',
+    zh: '庄园尊享典藏设施与管家礼遇',
+  };
+
+  const eyebrow = eyebrows[currentLang] || eyebrows.en;
 
   return (
     <section id="facilities" className="pt-6 sm:pt-10 md:pt-14 pb-8 sm:pb-12 md:pb-16 bg-[#141413] text-[#FAF8F5]">
@@ -22,7 +36,7 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({ currentLan
         <div className="max-w-3xl mb-8 sm:mb-12">
           <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.3em] uppercase text-[#C4A27A] font-medium mb-3">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Curated Estate Amenities</span>
+            <span>{eyebrow}</span>
           </div>
           <h2
             id="facilities-heading"
@@ -39,13 +53,13 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({ currentLan
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-8 sm:mb-12">
           {/* Left Column: Interactive Facility List */}
           <div className="lg:col-span-5 space-y-2">
-            {FACILITIES_DATA.map((fac) => {
+            {facilities.map((fac) => {
               const isSelected = fac.id === activeFacilityId;
               return (
                 <button
                   key={fac.id}
                   onClick={() => setActiveFacilityId(fac.id)}
-                  className={`w-full text-left p-4 sm:p-5 rounded-lg transition-all duration-300 flex items-center justify-between border ${
+                  className={`w-full text-left p-4 sm:p-5 rounded-lg transition-all duration-300 flex items-center justify-between border cursor-pointer ${
                     isSelected
                       ? 'bg-[#22211F] border-[#B8966C] text-[#FAF8F5] shadow-lg translate-x-1'
                       : 'bg-transparent border-[#2C2B28] text-[#D8CCB8]/70 hover:bg-[#1C1B1A] hover:text-[#FAF8F5]'

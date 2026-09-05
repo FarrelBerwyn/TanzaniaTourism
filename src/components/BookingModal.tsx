@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Calendar, Users, Home, CheckCircle2, MessageSquare, ArrowRight, ShieldCheck } from 'lucide-react';
 import { Language } from '../types';
-import { VILLAS_DATA } from '../data/villas';
+import { getLocalizedVillas, getLocalizedVilla } from '../data/villaTranslations';
 import { PROPERTY_CONFIG } from '../data/propertyConfig';
 import { TRANSLATIONS } from '../data/translations';
 
@@ -28,7 +28,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const t = TRANSLATIONS[currentLang];
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  const localizedVillas = getLocalizedVillas(currentLang);
 
   const today = new Date();
   const defaultCheckIn =
@@ -38,7 +39,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     initialCheckOut ||
     new Date(today.getTime() + 19 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-  const [selectedVillaId, setSelectedVillaId] = useState(initialVillaId || VILLAS_DATA[0].id);
+  const [selectedVillaId, setSelectedVillaId] = useState(initialVillaId || localizedVillas[0].id);
   const [checkIn, setCheckIn] = useState(defaultCheckIn);
   const [checkOut, setCheckOut] = useState(defaultCheckOut);
   const [guests, setGuests] = useState(initialGuests || 2);
@@ -53,7 +54,159 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [isSuccess, setIsSuccess] = useState(false);
 
   const chosenVilla =
-    VILLAS_DATA.find((v) => v.id === selectedVillaId) || VILLAS_DATA[0];
+    getLocalizedVilla(selectedVillaId, currentLang) || localizedVillas[0];
+
+  const guestUnit = t.quickBooking.guests || 'Guests';
+
+  const modalCustomLabels: Record<
+    Language,
+    {
+      chatSupport: string;
+      noPaymentNote: string;
+      accommodationLabel: string;
+      datesLabel: string;
+      partySizeLabel: string;
+      guestLabel: string;
+      namePlaceholder: string;
+      emailPlaceholder: string;
+      phonePlaceholder: string;
+      countryPlaceholder: string;
+      specialRequestsPlaceholder: string;
+      supportPrompt: (villaName: string, checkIn: string, checkOut: string, guests: number) => string;
+      closeModalAria: string;
+    }
+  > = {
+    en: {
+      chatSupport: 'Chat with Customer Support',
+      noPaymentNote: 'No payment required now • 100% Secure',
+      accommodationLabel: 'Accommodation:',
+      datesLabel: 'Dates:',
+      partySizeLabel: 'Party Size:',
+      guestLabel: 'Guest:',
+      namePlaceholder: 'e.g. Eleanor Vance',
+      emailPlaceholder: 'e.g. eleanor@residence.com',
+      phonePlaceholder: '+44 7911 123456',
+      countryPlaceholder: 'e.g. United Kingdom',
+      specialRequestsPlaceholder: 'Dietary requirements, honeymoon setup, late arrival notes...',
+      supportPrompt: (v, inDate, outDate, g) =>
+        `Hello Zanzirangi Customer Support, I just submitted a reservation inquiry for ${v} (${inDate} to ${outDate}, ${g} guests). Could you please check availability and details?`,
+      closeModalAria: 'Close modal',
+    },
+    fr: {
+      chatSupport: 'Discuter avec le Service Client',
+      noPaymentNote: 'Aucun paiement requis maintenant • 100% Sécurisé',
+      accommodationLabel: 'Hébergement :',
+      datesLabel: 'Dates :',
+      partySizeLabel: 'Nombre de Voyageurs :',
+      guestLabel: 'Client :',
+      namePlaceholder: 'ex. Éléonore Vance',
+      emailPlaceholder: 'ex. eleonore@domaine.fr',
+      phonePlaceholder: '+33 6 12 34 56 78',
+      countryPlaceholder: 'ex. France',
+      specialRequestsPlaceholder: 'Régimes alimentaires particuliers, lune de miel, arrivée tardive...',
+      supportPrompt: (v, inDate, outDate, g) =>
+        `Bonjour le Service Client Zanzirangi, je viens de soumettre une demande de réservation pour ${v} (du ${inDate} au ${outDate}, ${g} personnes). Pourriez-vous confirmer la disponibilité ?`,
+      closeModalAria: 'Fermer la boîte de dialogue',
+    },
+    sw: {
+      chatSupport: 'Ongea na Huduma kwa Wateja',
+      noPaymentNote: 'Hakuna malipo yanayohitajika sasa • 100% Salama',
+      accommodationLabel: 'Chumba / Villa:',
+      datesLabel: 'Tarehe:',
+      partySizeLabel: 'Idadi ya Wageni:',
+      guestLabel: 'Mgeni:',
+      namePlaceholder: 'mf. Juma Bakari',
+      emailPlaceholder: 'mf. juma@residence.com',
+      phonePlaceholder: '+255 777 123 456',
+      countryPlaceholder: 'mf. Tanzania',
+      specialRequestsPlaceholder: 'Chakula maalum, maadhimisho ya fungate, taarifa za kuchelewa kufika...',
+      supportPrompt: (v, inDate, outDate, g) =>
+        `Jambo Huduma kwa Wateja Zanzirangi, nimetuma ombi la kuweka nafasi ya ${v} (kuanzia ${inDate} hadi ${outDate}, wageni ${g}). Tafadhali naomba kuthibitisha nafasi na maelezo?`,
+      closeModalAria: 'Funga dirisha',
+    },
+    es: {
+      chatSupport: 'Hablar con Atención al Huésped',
+      noPaymentNote: 'Sin pago requerido ahora • 100% Seguro',
+      accommodationLabel: 'Alojamiento:',
+      datesLabel: 'Fechas:',
+      partySizeLabel: 'Número de Huéspedes:',
+      guestLabel: 'Huésped:',
+      namePlaceholder: 'ej. Elena Varela',
+      emailPlaceholder: 'ej. elena@residencia.es',
+      phonePlaceholder: '+34 612 345 678',
+      countryPlaceholder: 'ej. España',
+      specialRequestsPlaceholder: 'Preferencias dietéticas, detalles para luna de miel, hora prevista de llegada...',
+      supportPrompt: (v, inDate, outDate, g) =>
+        `Hola Atención al Huésped Zanzirangi, acabo de enviar una solicitud de reserva para ${v} (del ${inDate} al ${outDate}, ${g} huéspedes). ¿Podrían confirmar disponibilidad y detalles?`,
+      closeModalAria: 'Cerrar ventana',
+    },
+    it: {
+      chatSupport: 'Parla con l’Assistenza Ospiti',
+      noPaymentNote: 'Nessun pagamento richiesto ora • 100% Sicuro',
+      accommodationLabel: 'Alloggio:',
+      datesLabel: 'Date:',
+      partySizeLabel: 'Numero di Ospiti:',
+      guestLabel: 'Ospite:',
+      namePlaceholder: 'es. Eleonora Rossi',
+      emailPlaceholder: 'es. eleonora@residenza.it',
+      phonePlaceholder: '+39 333 1234567',
+      countryPlaceholder: 'es. Italia',
+      specialRequestsPlaceholder: 'Esigenze alimentari, allestimento luna di miele, arrivo tardivo...',
+      supportPrompt: (v, inDate, outDate, g) =>
+        `Buongiorno Assistenza Zanzirangi, ho appena inviato una richiesta di prenotazione per ${v} (dal ${inDate} al ${outDate}, ${g} ospiti). Potreste confermare disponibilità e dettagli?`,
+      closeModalAria: 'Chiudi finestra',
+    },
+    pl: {
+      chatSupport: 'Czat z Obsługą Klienta',
+      noPaymentNote: 'Płatność nie jest teraz wymagana • 100% Bezpieczeństwa',
+      accommodationLabel: 'Zakwaterowanie:',
+      datesLabel: 'Termin:',
+      partySizeLabel: 'Liczba Gości:',
+      guestLabel: 'Gość:',
+      namePlaceholder: 'np. Eleonora Nowak',
+      emailPlaceholder: 'np. eleonora@rezydencja.pl',
+      phonePlaceholder: '+48 601 234 567',
+      countryPlaceholder: 'np. Polska',
+      specialRequestsPlaceholder: 'Wymogi dietetyczne, pakiet dla nowożeńców, późniejszy przyjazd...',
+      supportPrompt: (v, inDate, outDate, g) =>
+        `Dzień dobry Obsługo Zanzirangi, właśnie przesłałem zapytanie o rezerwację willi ${v} (${inDate} do ${outDate}, liczba gości: ${g}). Czy mogliby Państwo sprawdzić dostępność?`,
+      closeModalAria: 'Zamknij okno',
+    },
+    ar: {
+      chatSupport: 'التحدث مع خدمة العملاء والكونسيرج',
+      noPaymentNote: 'لا يُطلب دفع أي مبالغ الآن • حجز آمن 100%',
+      accommodationLabel: 'مكان الإقامة:',
+      datesLabel: 'التواريخ:',
+      partySizeLabel: 'عدد الضيوف:',
+      guestLabel: 'اسم الضيف:',
+      namePlaceholder: 'مثال: نورة السعيد',
+      emailPlaceholder: 'مثال: noura@example.com',
+      phonePlaceholder: '+966 50 123 4567',
+      countryPlaceholder: 'مثال: المملكة العربية السعودية',
+      specialRequestsPlaceholder: 'المتطلبات الغذائية، باقة شهر العسل، موعد الوصول المتأخر...',
+      supportPrompt: (v, inDate, outDate, g) =>
+        `مرحباً خدمة عملاء زنجيرانجي، لقد قمت للتو بتقديم طلب استفسار حجز لـ ${v} (من ${inDate} إلى ${outDate}، لعدد ${g} ضيوف). هل يمكنكم تأكيد التوفر والتفاصيل؟`,
+      closeModalAria: 'إغلاق النافذة',
+    },
+    zh: {
+      chatSupport: '在线咨询专属客户管家',
+      noPaymentNote: '现阶段无需预先扣款 • 100% 官方直订安全保障',
+      accommodationLabel: '预订下榻房型：',
+      datesLabel: '入住与离店日期：',
+      partySizeLabel: '入住人数：',
+      guestLabel: '预订贵宾：',
+      namePlaceholder: '例如：王小明',
+      emailPlaceholder: '例如：xiaoming@residence.com',
+      phonePlaceholder: '+86 138 0000 0000',
+      countryPlaceholder: '例如：中国',
+      specialRequestsPlaceholder: '特殊饮食习惯、蜜月浪漫布置安排、预计晚抵时间...',
+      supportPrompt: (v, inDate, outDate, g) =>
+        `您好，Zanzirangi 专属管家！我刚刚提交了 ${v} 的预订咨询意向（日期：${inDate} 至 ${outDate}，共 ${g} 位贵宾）。请协助核实空房与专属礼遇细节。`,
+      closeModalAria: '关闭窗口',
+    },
+  };
+
+  const customUi = modalCustomLabels[currentLang] || modalCustomLabels.en;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,8 +238,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-black/5 text-[#1C1B1A] transition-colors"
-            aria-label="Close modal"
+            className="p-2 rounded-full hover:bg-black/5 text-[#1C1B1A] transition-colors cursor-pointer"
+            aria-label={customUi.closeModalAria}
           >
             <X className="w-5 h-5" />
           </button>
@@ -112,16 +265,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Inquiry Summary Pill */}
               <div className="bg-[#F4EFE6] border border-[#E7DFD2] p-5 rounded-lg max-w-md mx-auto text-left text-xs space-y-1.5 font-mono">
                 <p>
-                  <strong className="text-[#A07E54]">Accommodation:</strong> {chosenVilla.name} ({chosenVilla.roomNumber})
+                  <strong className="text-[#A07E54]">{customUi.accommodationLabel}</strong> {chosenVilla.name} ({chosenVilla.roomNumber})
                 </p>
                 <p>
-                  <strong className="text-[#A07E54]">Dates:</strong> {checkIn} → {checkOut}
+                  <strong className="text-[#A07E54]">{customUi.datesLabel}</strong> {checkIn} → {checkOut}
                 </p>
                 <p>
-                  <strong className="text-[#A07E54]">Party Size:</strong> {guests} Guests
+                  <strong className="text-[#A07E54]">{customUi.partySizeLabel}</strong> {guests} {guestUnit}
                 </p>
                 <p>
-                  <strong className="text-[#A07E54]">Guest:</strong> {fullName} ({email})
+                  <strong className="text-[#A07E54]">{customUi.guestLabel}</strong> {fullName} ({email})
                 </p>
               </div>
 
@@ -130,7 +283,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   type="button"
                   onClick={() => {
                     onClose();
-                    const prompt = `Hello Zanzirangi Customer Support, I just submitted a reservation inquiry for ${chosenVilla.name} (${checkIn} to ${checkOut}, ${guests} guests). Could you please check availability and details?`;
+                    const prompt = customUi.supportPrompt(chosenVilla.name, checkIn, checkOut, guests);
                     if (onOpenSupportChat) {
                       onOpenSupportChat(prompt);
                     } else {
@@ -140,12 +293,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   className="w-full sm:w-auto px-6 py-3 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-bold tracking-wider uppercase rounded flex items-center justify-center space-x-2 transition-all shadow cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>Chat with Customer Support</span>
+                  <span>{customUi.chatSupport}</span>
                 </button>
 
                 <button
                   onClick={onClose}
-                  className="w-full sm:w-auto px-6 py-3 border border-[#1C1B1A]/30 hover:bg-[#1C1B1A] hover:text-[#FAF8F5] text-[#1C1B1A] text-xs font-semibold tracking-wider uppercase rounded transition-all"
+                  className="w-full sm:w-auto px-6 py-3 border border-[#1C1B1A]/30 hover:bg-[#1C1B1A] hover:text-[#FAF8F5] text-[#1C1B1A] text-xs font-semibold tracking-wider uppercase rounded transition-all cursor-pointer"
                 >
                   {t.bookingModal.close}
                 </button>
@@ -179,7 +332,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       onChange={(e) => setSelectedVillaId(e.target.value)}
                       className="w-full bg-[#FAF8F5] border border-[#E7DFD2] rounded p-2.5 text-sm text-[#141413] focus:outline-none focus:border-[#B8966C]"
                     >
-                      {VILLAS_DATA.map((v) => (
+                      {localizedVillas.map((v) => (
                         <option key={v.id} value={v.id}>
                           {v.roomNumber} - {v.name} ({v.type}) • {v.pricePerNight}
                         </option>
@@ -238,7 +391,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     >
                       {[1, 2, 3, 4, 5, 6].map((num) => (
                         <option key={num} value={num}>
-                          {num} Guests
+                          {num} {guestUnit}
                         </option>
                       ))}
                     </select>
@@ -266,7 +419,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="e.g. Eleanor Vance"
+                      placeholder={customUi.namePlaceholder}
                       className="w-full bg-[#FAF8F5] border border-[#E7DFD2] rounded p-2.5 text-sm text-[#141413] focus:outline-none focus:border-[#B8966C]"
                       required
                     />
@@ -284,7 +437,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="e.g. eleanor@residence.com"
+                      placeholder={customUi.emailPlaceholder}
                       className="w-full bg-[#FAF8F5] border border-[#E7DFD2] rounded p-2.5 text-sm text-[#141413] focus:outline-none focus:border-[#B8966C]"
                       required
                     />
@@ -302,7 +455,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+44 7911 123456"
+                      placeholder={customUi.phonePlaceholder}
                       className="w-full bg-[#FAF8F5] border border-[#E7DFD2] rounded p-2.5 text-sm text-[#141413] focus:outline-none focus:border-[#B8966C]"
                     />
                   </div>
@@ -319,7 +472,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       type="text"
                       value={country}
                       onChange={(e) => setCountry(e.target.value)}
-                      placeholder="e.g. United Kingdom"
+                      placeholder={customUi.countryPlaceholder}
                       className="w-full bg-[#FAF8F5] border border-[#E7DFD2] rounded p-2.5 text-sm text-[#141413] focus:outline-none focus:border-[#B8966C]"
                     />
                   </div>
@@ -338,7 +491,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     rows={3}
                     value={specialRequests}
                     onChange={(e) => setSpecialRequests(e.target.value)}
-                    placeholder="Dietary requirements, honeymoon setup, late arrival notes..."
+                    placeholder={customUi.specialRequestsPlaceholder}
                     className="w-full bg-[#FAF8F5] border border-[#E7DFD2] rounded p-2.5 text-sm text-[#141413] focus:outline-none focus:border-[#B8966C]"
                   />
                 </div>
@@ -363,13 +516,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <div className="pt-4 border-t border-[#E7DFD2] flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center space-x-1.5 text-xs text-[#6B6862]">
                   <ShieldCheck className="w-4 h-4 text-[#A07E54]" />
-                  <span>No payment required now • 100% Secure</span>
+                  <span>{customUi.noPaymentNote}</span>
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto px-8 py-3.5 bg-[#B8966C] hover:bg-[#C4A27A] disabled:opacity-50 text-[#141413] text-xs font-semibold tracking-[0.2em] uppercase rounded flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95"
+                  className="w-full sm:w-auto px-8 py-3.5 bg-[#B8966C] hover:bg-[#C4A27A] disabled:opacity-50 text-[#141413] text-xs font-semibold tracking-[0.2em] uppercase rounded flex items-center justify-center space-x-2 transition-all shadow-md active:scale-95 cursor-pointer"
                 >
                   <span>
                     {isSubmitting ? t.bookingModal.submitting : t.bookingModal.submitRequest}

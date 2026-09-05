@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronDown, Sparkles, MapPin, Compass } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 import heroVideo from '../data/Zanzirangi-home.mp4';
@@ -29,6 +30,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     } else {
       onOpenBooking();
     }
+  };
+
+  const scrollAriaLabels: Record<Language, string> = {
+    en: 'Scroll to discover property',
+    fr: 'Défiler pour découvrir la propriété',
+    sw: 'Sogeza chini kugundua makazi',
+    es: 'Desplazarse para descubrir la propiedad',
+    it: 'Scorri per scoprire la proprietà',
+    pl: 'Przewiń, aby odkryć posiadłość',
+    ar: 'انتقل للأسفل لاستكشاف المنتجع',
+    zh: '向下滚动探索庄园',
   };
 
   return (
@@ -61,37 +73,58 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="h-20 sm:h-24 md:h-32" />
 
       {/* Main Editorial Hero Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 md:px-12 text-center my-auto py-8 sm:py-10 md:py-16">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 md:px-12 text-center my-auto py-8 sm:py-10 md:py-16"
+      >
         {/* Subtle Location Indicator Eyebrow */}
-        <div className="inline-flex items-center space-x-1.5 sm:space-x-2.5 px-3 py-1 sm:px-5 sm:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#FAF8F5] text-[8.5px] xs:text-[9.5px] sm:text-xs tracking-[0.12em] sm:tracking-[0.32em] uppercase mb-6 sm:mb-8 shadow-lg whitespace-nowrap max-w-full">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="inline-flex items-center space-x-1.5 sm:space-x-2.5 px-3 py-1 sm:px-5 sm:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#FAF8F5] text-[8.5px] xs:text-[9.5px] sm:text-xs tracking-[0.12em] sm:tracking-[0.32em] uppercase mb-6 sm:mb-8 shadow-lg whitespace-nowrap max-w-full"
+        >
           <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#C4A27A] flex-shrink-0" />
           <span className="font-medium text-[#FAF8F5] whitespace-nowrap">ZANZIBAR, TANZANIA</span>
           <span className="text-[#C4A27A] flex-shrink-0">•</span>
           <span className="text-[#D8CCB8] tracking-[0.12em] sm:tracking-[0.25em] whitespace-nowrap">ZANZIRANGI HOUSE</span>
-        </div>
+        </motion.div>
 
         {/* Major Headline */}
-        <h1
+        <motion.h1
           id="hero-main-title"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           className="font-serif text-2xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[80px] font-light tracking-[0.06em] sm:tracking-[0.08em] leading-[1.15] sm:leading-[1.12] text-[#FAF8F5] uppercase mb-4 sm:mb-6 drop-shadow-xl"
         >
           {t.hero.title || 'YOUR PRIVATE GATEWAY TO ZANZIBAR'}
-        </h1>
+        </motion.h1>
 
         {/* Supporting Narrative */}
-        <p
+        <motion.p
           id="hero-subtitle"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-2xl mx-auto font-sans text-sm sm:text-lg md:text-xl font-light text-[#E7DFD2] leading-relaxed tracking-wide mb-8 sm:mb-10 md:mb-12 drop-shadow-md"
         >
           {t.hero.subtitle || 'Stay, explore and experience the island — with Tanzania beyond.'}
-        </p>
+        </motion.p>
 
         {/* Primary and Secondary Luxury CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 max-w-md sm:max-w-none mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 max-w-md sm:max-w-none mx-auto"
+        >
           <button
             id="hero-explore-button"
             onClick={handleScrollToStay}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-[#FAF8F5]/80 hover:border-[#FAF8F5] text-[#FAF8F5] hover:bg-white/15 text-xs sm:text-sm tracking-[0.18em] sm:tracking-[0.22em] uppercase font-semibold rounded transition-all duration-300 backdrop-blur-sm shadow-md active:scale-95"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-[#FAF8F5]/80 hover:border-[#FAF8F5] text-[#FAF8F5] hover:bg-white/15 text-xs sm:text-sm tracking-[0.18em] sm:tracking-[0.22em] uppercase font-semibold rounded transition-all duration-300 backdrop-blur-sm shadow-md active:scale-95 cursor-pointer"
           >
             {t.hero.exploreProperty || 'EXPLORE THE RETREAT'}
           </button>
@@ -99,35 +132,45 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <button
             id="hero-book-button"
             onClick={handleScrollToItinerary}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs sm:text-sm tracking-[0.18em] sm:tracking-[0.22em] uppercase font-bold rounded transition-all duration-300 shadow-xl hover:shadow-2xl active:scale-95"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs sm:text-sm tracking-[0.18em] sm:tracking-[0.22em] uppercase font-bold rounded transition-all duration-300 shadow-xl hover:shadow-2xl active:scale-95 cursor-pointer"
           >
             {t.hero.bookYourStay || 'PLAN YOUR JOURNEY'}
           </button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Bottom Bar: Coordinates & Scroll Cue */}
-      <div className="relative z-10 pb-6 sm:pb-8 px-4 sm:px-6 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="hidden sm:flex items-center space-x-2 text-[11px] font-mono tracking-widest text-[#D8CCB8]/70 uppercase">
-          <Compass className="w-3.5 h-3.5 text-[#C4A27A]" />
-          <span>6°26'34.4"S 39°28'04.1"E • Kizimkazi Dimbani</span>
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.75, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 w-full pb-6 sm:pb-8 px-4 sm:px-6 md:px-12 flex items-center justify-between min-h-[48px]"
+      >
+        {/* Left: Shortened location text */}
+        <div className="hidden sm:flex items-center space-x-2 text-[11px] font-mono tracking-widest text-[#D8CCB8]/70 uppercase z-10">
+          <Compass className="w-3.5 h-3.5 text-[#C4A27A] flex-shrink-0" />
+          <span>Kizimkazi • Zanzibar</span>
         </div>
 
-        <button
-          onClick={handleScrollToStay}
-          className="group flex flex-col items-center space-y-1.5 text-[#D8CCB8]/80 hover:text-[#FAF8F5] transition-colors focus:outline-none"
-          aria-label="Scroll to discover property"
-        >
-          <span className="text-[10px] tracking-[0.3em] uppercase font-light">
-            {t.hero.scrollIndicator || 'SCROLL TO DISCOVER'}
-          </span>
-          <ChevronDown className="w-4 h-4 animate-bounce text-[#C4A27A]" />
-        </button>
+        {/* Center: Scroll to Discover indicator (strictly centered on entire hero width) */}
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-6 sm:bottom-8 z-20 pointer-events-auto">
+          <button
+            onClick={handleScrollToStay}
+            className="group flex flex-col items-center space-y-1.5 text-[#D8CCB8]/80 hover:text-[#FAF8F5] transition-colors focus:outline-none cursor-pointer"
+            aria-label={scrollAriaLabels[currentLang] || scrollAriaLabels.en}
+          >
+            <span className="text-[10px] tracking-[0.3em] uppercase font-light whitespace-nowrap">
+              {t.hero.scrollIndicator || 'SCROLL TO DISCOVER'}
+            </span>
+            <ChevronDown className="w-4 h-4 animate-bounce text-[#C4A27A]" />
+          </button>
+        </div>
 
-        <div className="hidden sm:block text-[11px] font-mono tracking-widest text-[#D8CCB8]/70 uppercase">
+        {/* Right: Region tag */}
+        <div className="hidden sm:block text-right text-[11px] font-mono tracking-widest text-[#D8CCB8]/70 uppercase z-10 ml-auto">
           <span>Indian Ocean Lagoon • Menai Bay</span>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

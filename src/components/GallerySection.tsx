@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Camera, Maximize2 } from 'lucide-react';
 import { GalleryItem, GalleryCategory, Language } from '../types';
-import { GALLERY_DATA } from '../data/gallery';
 import { TRANSLATIONS } from '../data/translations';
+import { getLocalizedGallery, GALLERY_TRANSLATIONS, LocalizedGalleryItem } from '../data/galleryTranslations';
 import { LightboxModal } from './LightboxModal';
 import { ScrollFadeContainer } from './ScrollFadeContainer';
 
@@ -12,24 +12,27 @@ interface GallerySectionProps {
 
 export const GallerySection: React.FC<GallerySectionProps> = ({ currentLang }) => {
   const t = TRANSLATIONS[currentLang];
+  const tGallery = GALLERY_TRANSLATIONS[currentLang] || GALLERY_TRANSLATIONS.en;
   const [activeCategory, setActiveCategory] = useState<GalleryCategory | 'all'>('all');
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
 
   const categories: { id: GalleryCategory | 'all'; label: string }[] = [
-    { id: 'all', label: 'All Photographs' },
-    { id: 'property', label: 'Property' },
-    { id: 'villas', label: 'Villas' },
-    { id: 'dining', label: 'Dining' },
-    { id: 'pool', label: 'Pool' },
-    { id: 'garden', label: 'Garden' },
-    { id: 'zanzibar', label: 'Zanzibar' },
-    { id: 'experiences', label: 'Experiences' },
+    { id: 'all', label: tGallery.categories.all },
+    { id: 'property', label: tGallery.categories.property },
+    { id: 'villas', label: tGallery.categories.villas },
+    { id: 'dining', label: tGallery.categories.dining },
+    { id: 'pool', label: tGallery.categories.pool },
+    { id: 'garden', label: tGallery.categories.garden },
+    { id: 'zanzibar', label: tGallery.categories.zanzibar },
+    { id: 'experiences', label: tGallery.categories.experiences },
   ];
+
+  const localizedItems = getLocalizedGallery(currentLang);
 
   const filteredItems =
     activeCategory === 'all'
-      ? GALLERY_DATA
-      : GALLERY_DATA.filter((item) => item.category === activeCategory);
+      ? localizedItems
+      : localizedItems.filter((item) => item.category === activeCategory);
 
   return (
     <section id="gallery" className="pt-6 sm:pt-10 md:pt-14 pb-20 sm:pb-28 md:pb-36 bg-[#141413] text-[#FAF8F5]">
@@ -39,7 +42,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ currentLang }) =
           <div>
             <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.3em] uppercase text-[#C4A27A] font-medium mb-3">
               <Camera className="w-3.5 h-3.5" />
-              <span>Visual Archive</span>
+              <span>{tGallery.eyebrow}</span>
             </div>
             <h2
               id="gallery-heading"
@@ -65,7 +68,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ currentLang }) =
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`flex-shrink-0 px-4 py-2 text-xs tracking-[0.14em] uppercase font-semibold rounded-full transition-all whitespace-nowrap ${
+              className={`flex-shrink-0 px-4 py-2 text-xs tracking-[0.14em] uppercase font-semibold rounded-full transition-all whitespace-nowrap cursor-pointer ${
                 activeCategory === cat.id
                   ? 'bg-[#B8966C] text-[#141413] shadow-lg'
                   : 'bg-[#22211F] text-[#D8CCB8]/70 hover:bg-[#2C2B28] hover:text-[#FAF8F5]'
@@ -101,7 +104,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ currentLang }) =
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                   <span className="text-[10px] font-mono tracking-widest uppercase text-[#C4A27A]">
-                    {item.category}
+                    {item.localizedCategoryName}
                   </span>
                   <h4 className="font-serif text-lg text-white font-normal tracking-wide">
                     {item.title}
@@ -127,6 +130,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ currentLang }) =
         <LightboxModal
           item={selectedItem}
           items={filteredItems}
+          currentLang={currentLang}
           onClose={() => setSelectedItem(null)}
           onNavigate={(newItem) => setSelectedItem(newItem)}
         />

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Sparkles } from 'lucide-react';
 import { Language } from '../types';
-import { CHAT_TRANSLATIONS } from '../data/chatTranslations';
+import { CHAT_TRANSLATIONS, ChatQuickPrompt } from '../data/chatTranslations';
 import { ScrollFadeContainer } from './ScrollFadeContainer';
 
 interface Message {
@@ -49,6 +49,27 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
   const t = CHAT_TRANSLATIONS[currentLang] || CHAT_TRANSLATIONS.en;
   const isRtl = currentLang === 'ar';
 
+  const [shuffledPrompts, setShuffledPrompts] = useState<ChatQuickPrompt[]>(() => {
+    const list = [...(CHAT_TRANSLATIONS[currentLang] || CHAT_TRANSLATIONS.en).quickPrompts];
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    return list;
+  });
+
+  // Reshuffle recommendations randomly each time the chat is opened or language changes
+  useEffect(() => {
+    if (isOpen) {
+      const list = [...t.quickPrompts];
+      for (let i = list.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [list[i], list[j]] = [list[j], list[i]];
+      }
+      setShuffledPrompts(list);
+    }
+  }, [isOpen, currentLang]);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
@@ -59,10 +80,35 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const triggerBtnRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      if (
+        chatContainerRef.current &&
+        !chatContainerRef.current.contains(target) &&
+        triggerBtnRef.current &&
+        !triggerBtnRef.current.contains(target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     setMessages((prev) => {
@@ -220,7 +266,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     }
 
     // FAQ: Check-in & Check-out times
-    const checkinKeywords = ['check-in', 'checkin', 'check out', 'checkout', 'horaires', 'muda wa kuingia', 'horario', 'arrived', 'departure', 'jam masuk', 'waktu masuk'];
+    const checkinKeywords = ['check-in', 'checkin', 'check out', 'checkout', 'horaires', 'muda wa kuingia', 'horario', 'arrived', 'departure', 'jam masuk', 'waktu masuk', 'wymeldowani', 'zameldowani', '入住', '退房', 'الوصول', 'المغادرة'];
     if (checkinKeywords.some((k) => q.includes(k))) {
       return {
         text: t.replies.checkin || 'Standard check-in is from 14:00 (2:00 PM) and check-out is until 11:00 AM. Flexible early check-in or late checkout can be accommodated based on villa availability.',
@@ -232,7 +278,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     }
 
     // FAQ: High-Speed Wi-Fi
-    const wifiKeywords = ['wifi', 'wi-fi', 'internet', 'speed', 'starlink', 'network', 'connect', 'online'];
+    const wifiKeywords = ['wifi', 'wi-fi', 'internet', 'speed', 'starlink', 'network', 'connect', 'online', 'wi-fi', 'ستارلينك', '星链', '无线'];
     if (wifiKeywords.some((k) => q.includes(k))) {
       return {
         text: t.replies.wifi || 'High-speed Starlink satellite Wi-Fi (150+ Mbps) is complimentary across all private villas, gardens, and dining pavilions, ensuring reliable connectivity for streaming or remote work.',
@@ -244,7 +290,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     }
 
     // FAQ: Payment & Cancellation Policy
-    const paymentKeywords = ['payment', 'pay', 'cancel', 'deposit', 'card', 'visa', 'mastercard', 'amex', 'paiement', 'pago', 'malipo', 'bayar', 'pembayaran'];
+    const paymentKeywords = ['payment', 'pay', 'cancel', 'deposit', 'card', 'visa', 'mastercard', 'amex', 'paiement', 'pago', 'malipo', 'bayar', 'pembayaran', 'płatnoś', 'anulac', 'الدفع', 'إلغاء', '付款', '取消'];
     if (paymentKeywords.some((k) => q.includes(k))) {
       return {
         text: t.replies.payment || 'We accept major credit cards (Visa, MasterCard, Amex), international bank transfers, and mobile payments. Cancellation terms offer full flexibility up to 14 days prior to arrival.',
@@ -255,8 +301,104 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
       };
     }
 
+    // FAQ: Kizimkazi Dolphins
+    const dolphinKeywords = ['dolphin', 'pomboo', 'dauphin', 'delfin', 'delfini', 'دلافين', 'دلفين', '海豚'];
+    if (dolphinKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.dolphins || 'Kizimkazi is world-famous for resident dolphin pods in the Menai Bay Conservation Area. We organize ethical sunrise dolphin safaris directly from our shore.',
+        action: {
+          label: 'Explore Dolphin Safaris',
+          onClick: () => scrollToSection('experiences'),
+        },
+      };
+    }
+
+    // FAQ: Sunset Dhow Sailing
+    const dhowKeywords = ['dhow', 'jahazi', 'dau', 'voilier', 'velero', 'قارب', 'الداو', '木船', '帆船'];
+    if (dhowKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.dhow || 'Glide across the turquoise Indian Ocean aboard a handcrafted wooden dhow while enjoying chilled Champagne and fresh Swahili canapés as the sun sets.',
+        action: {
+          label: 'View Sunset Sailing',
+          onClick: () => scrollToSection('experiences'),
+        },
+      };
+    }
+
+    // FAQ: Spa & Wellness Treatments
+    const spaKeywords = ['spa', 'massage', 'masaji', 'bien-être', 'bienestar', 'odnowa', 'تدليك', 'سبا', '水疗', '按摩', 'wellness', 'therap'];
+    if (spaKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.spa || 'Our in-villa wellness treatments feature cold-pressed Zanzibari coconut oils, clove and cinnamon body scrubs, and soothing deep-tissue massages performed on your private ocean deck.',
+        action: {
+          label: 'View Wellness & Spa',
+          onClick: () => scrollToSection('experiences'),
+        },
+      };
+    }
+
+    // FAQ: Private Candlelight Beach Dining
+    const candleKeywords = ['candle', 'candlelight', 'chandelles', 'romantique', 'mishumaa', 'vela', 'velas', 'شموع', 'شمع', '烛光', 'świec'];
+    if (candleKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.beachDining || 'We arrange unforgettable candlelit dinners directly on the soft white sands or elevated coral terraces with torchlight and a custom 5-course seafood tasting menu.',
+        action: {
+          label: 'Taste Dining Moments',
+          onClick: () => scrollToSection('dining'),
+        },
+      };
+    }
+
+    // FAQ: Stone Town & Spice Tour
+    const stonetownKeywords = ['stone town', 'spice', 'épices', 'viungo', 'especias', 'spezie', 'التوابل', 'المدينة الحجرية', '石头城', '香料', 'przypraw'];
+    if (stonetownKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.stonetown || 'We organize private cultural journeys with local historians through UNESCO-listed Stone Town and organic spice plantations celebrating vanilla, cloves, and cardamom.',
+        action: {
+          label: 'Discover Island Tours',
+          onClick: () => scrollToSection('experiences'),
+        },
+      };
+    }
+
+    // FAQ: Family & Children Stays
+    const familyKeywords = ['family', 'children', 'child', 'kid', 'famille', 'enfant', 'familia', 'niño', 'watoto', 'bambin', 'عائل', 'أطفال', '家庭', '儿童', 'rodzin'];
+    if (familyKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.family || 'Families are warmly welcomed. We offer interconnecting villa sanctuaries, extra beds, tailored kids menus, and professional babysitting upon request.',
+        action: {
+          label: 'Explore Family Villas',
+          onClick: () => scrollToSection('stay'),
+        },
+      };
+    }
+
+    // FAQ: Honeymoon & Celebrations
+    const honeymoonKeywords = ['honeymoon', 'anniversary', 'lune de miel', 'fungate', 'luna de miel', 'luna di miele', 'عسل', 'رومانس', '蜜月', 'młod', 'poślubn'];
+    if (honeymoonKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.honeymoon || 'For honeymooners, we prepare complimentary chilled Champagne, fresh tropical floral arrangements, a private sunset dhow sail, and a romantic beach dinner under the stars.',
+        action: {
+          label: 'Plan Honeymoon Escape',
+          onClick: () => (onOpenBooking ? onOpenBooking() : scrollToSection('stay')),
+        },
+      };
+    }
+
+    // FAQ: Diving & Snorkeling
+    const divingKeywords = ['dive', 'diving', 'snorkel', 'snorkeling', 'plongée', 'kuzamia', 'buceo', 'immersi', 'غوص', 'سنوركل', '潜水', '浮潜', 'nurkowan', 'reef', 'coral'];
+    if (divingKeywords.some((k) => q.includes(k))) {
+      return {
+        text: t.replies.diving || 'Partnering with certified PADI dive masters, we take you to the pristine reefs of Mnemba Atoll and Kizimkazi to observe sea turtles, manta rays, and vibrant marine life.',
+        action: {
+          label: 'Explore Marine Safaris',
+          onClick: () => scrollToSection('experiences'),
+        },
+      };
+    }
+
     // FAQ: Pools & Beach Access
-    const poolKeywords = ['pool', 'plunge', 'swim', 'beach', 'ocean', 'piscine', 'bwawa', 'piscina', 'pantai', 'kolam'];
+    const poolKeywords = ['pool', 'plunge', 'swim', 'beach', 'ocean', 'piscine', 'bwawa', 'piscina', 'pantai', 'kolam', 'basen', 'المسبح', 'الشاطئ', '泳池', '沙滩'];
     if (poolKeywords.some((k) => q.includes(k))) {
       return {
         text: 'Every single one of our 8 luxury sanctuaries features its own private freshwater plunge pool, sun loungers, and direct private pathway access to the pristine shores of the Indian Ocean.',
@@ -268,7 +410,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     }
 
     // General categories
-    const safariKeywords = ['safari', 'wildlife', 'big five', 'fly-in', 'game drive', 'bush'];
+    const safariKeywords = ['safari', 'wildlife', 'big five', 'fly-in', 'game drive', 'bush', 'serengeti', 'ngorongoro', 'سيرينجيتي', '塞伦盖蒂'];
     if (safariKeywords.some((k) => q.includes(k))) {
       return {
         text: 'We organize chartered fly-in safaris directly from Zanzibar to Serengeti, Ngorongoro Crater, and Tarangire with luxury partner camps. Would you like to view our safari destinations?',
@@ -431,50 +573,126 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
     return () => window.removeEventListener('open-customer-support', handleOpenSupportEvent);
   }, []);
 
-  const faqShortcuts = [
+  const actionLabels: Record<
+    Language,
     {
-      label: '🕒 Check-in Times',
-      query: 'What are the check-in and check-out times?',
+      book: string;
+      checkRooms: string;
+      viewExperiences: string;
+      viewDining: string;
+      viewSafari: string;
+      closeChat: string;
+      sendAria: string;
+      conciergeRole: string;
+      openSupportAria: string;
+    }
+  > = {
+    en: {
+      book: 'Reserve Villa',
+      checkRooms: 'View Villas',
+      viewExperiences: 'View Experiences',
+      viewDining: 'Taste Dining Moments',
+      viewSafari: 'Explore Safaris',
+      closeChat: 'Close Chat',
+      sendAria: 'Send message',
+      conciergeRole: 'Juma • Private Concierge',
+      openSupportAria: 'Open Zanzirangi Customer Support',
     },
-    {
-      label: '✈ Airport Shuttle',
-      query: 'How does the airport transfer work and how far is it?',
+    fr: {
+      book: 'Réserver la villa',
+      checkRooms: 'Voir les villas',
+      viewExperiences: 'Découvrir les expériences',
+      viewDining: 'Découvrir les délices',
+      viewSafari: 'Explorer les safaris',
+      closeChat: 'Fermer le chat',
+      sendAria: 'Envoyer le message',
+      conciergeRole: 'Juma • Concierge Privé',
+      openSupportAria: 'Ouvrir le Service Client Zanzirangi',
     },
-    {
-      label: '🍳 Breakfast & Dining',
-      query: 'Is breakfast included and what dining options are available?',
+    sw: {
+      book: 'Weka Nafasi ya Villa',
+      checkRooms: 'Tazama Villa Zote',
+      viewExperiences: 'Tazama Safari & Vivutio',
+      viewDining: 'Tazama Menyu ya Chakula',
+      viewSafari: 'Tazama Safari za Tanzania',
+      closeChat: 'Funga Maongezi',
+      sendAria: 'Tuma ujumbe',
+      conciergeRole: 'Juma • Mhudumu Binafsi',
+      openSupportAria: 'Fungua Huduma kwa Wateja Zanzirangi',
     },
-    {
-      label: '📶 High-Speed Wi-Fi',
-      query: 'Is there high-speed Wi-Fi available across the property?',
+    es: {
+      book: 'Reservar Villa',
+      checkRooms: 'Ver Villas',
+      viewExperiences: 'Ver Experiencias',
+      viewDining: 'Ver Gastronomía',
+      viewSafari: 'Explorar Safaris',
+      closeChat: 'Cerrar chat',
+      sendAria: 'Enviar mensaje',
+      conciergeRole: 'Juma • Conserje Privado',
+      openSupportAria: 'Abrir Atención al Huésped Zanzirangi',
     },
-    {
-      label: '🏊 Private Pools',
-      query: 'Do all villas have private plunge pools and beach access?',
+    it: {
+      book: 'Prenota Villa',
+      checkRooms: 'Scopri le Ville',
+      viewExperiences: 'Esplora le Esperienze',
+      viewDining: 'Scopri la Ristorazione',
+      viewSafari: 'Esplora i Safari in Tanzania',
+      closeChat: 'Chiudi chat',
+      sendAria: 'Invia messaggio',
+      conciergeRole: 'Juma • Concierge Privato',
+      openSupportAria: 'Apri Assistenza Ospiti Zanzirangi',
     },
-    {
-      label: '🦁 Serengeti Safari',
-      query: 'How can we arrange a Serengeti safari or island excursions?',
+    pl: {
+      book: 'Zarezerwuj willę',
+      checkRooms: 'Zobacz wille',
+      viewExperiences: 'Odkryj atrakcje',
+      viewDining: 'Odkryj menu kulinarne',
+      viewSafari: 'Odkryj safari w Tanzanii',
+      closeChat: 'Zamknij czat',
+      sendAria: 'Wyślij wiadomość',
+      conciergeRole: 'Juma • Prywatny Konsjerż',
+      openSupportAria: 'Otwórz Obsługę Klienta Zanzirangi',
     },
-    {
-      label: '💳 Payment & Cancel',
-      query: 'What payment methods and cancellation policies apply?',
+    ar: {
+      book: 'حجز فيلا الآن',
+      checkRooms: 'استعراض الفلل',
+      viewExperiences: 'استكشاف التجارب والأنشطة',
+      viewDining: 'استكشاف تجارب الطعام',
+      viewSafari: 'استكشاف رحلات السفاري',
+      closeChat: 'إغلاق المحادثة',
+      sendAria: 'إرسال الرسالة',
+      conciergeRole: 'جمعة • الكونسيرج الخاص',
+      openSupportAria: 'فتح خدمة عملاء زنجيرانجي',
     },
-  ];
+    zh: {
+      book: '立即预订奢华别墅',
+      checkRooms: '查看专属别墅',
+      viewExperiences: '探索岛屿精彩体验',
+      viewDining: '探索珍馐美馔',
+      viewSafari: '了解坦桑尼亚猎游',
+      closeChat: '关闭客服窗口',
+      sendAria: '发送咨询消息',
+      conciergeRole: '朱马 • 专属私人管家',
+      openSupportAria: '打开 Zanzirangi 专属在线管家',
+    },
+  };
+
+  const currentUi = actionLabels[currentLang] || actionLabels.en;
 
   return (
     <>
-      {/* Floating Avatar Trigger Button in Bottom Left Corner (Z-30 under dark blur backdrop when open, Z-40 when closed) */}
+      {/* Floating Avatar Trigger Button in Bottom Left Corner */}
       <div
+        ref={triggerBtnRef}
         className={`fixed bottom-4 left-4 sm:bottom-6 sm:left-6 ${
-          isOpen ? 'z-30 pointer-events-none' : 'z-40'
+          isOpen ? 'z-30 pointer-events-none sm:pointer-events-auto sm:z-40' : 'z-40'
         } flex items-center font-sans transition-all duration-300`}
       >
         <button
           id="chat-assistant-avatar-btn"
           onClick={() => setIsOpen(!isOpen)}
-          className="group relative flex items-center space-x-2 sm:space-x-3 focus:outline-none"
-          aria-label="Open Zanzirangi Customer Support"
+          className="group relative flex items-center space-x-2 sm:space-x-3 focus:outline-none cursor-pointer"
+          aria-label={currentUi.openSupportAria}
         >
           {/* Glowing Circle Avatar with Golden Ring */}
           <div className="relative">
@@ -520,21 +738,22 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
           <div className="hidden sm:flex items-center space-x-2 px-4 py-2.5 bg-[#141413]/95 hover:bg-[#1C1B1A] border border-[#C4A27A]/50 rounded-2xl text-[#FAF8F5] shadow-2xl backdrop-blur-md transition-all duration-300 group-hover:border-[#C4A27A]">
             <div className="flex flex-col text-left leading-tight">
               <span className="text-xs font-semibold text-[#FAF8F5] tracking-wide">
-                Customer Support
+                {t.badgeTitle || 'Customer Support'}
               </span>
               <span className="text-[10px] text-emerald-400 font-mono tracking-wider flex items-center space-x-1.5 mt-0.5 font-medium">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                 </span>
-                <span>Online • Juma</span>
+                <span>{t.badgeStatus || 'Online • Juma'}</span>
               </span>
             </div>
           </div>
         </button>
       </div>
 
-      {/* Dark Blurred Backdrop: Hanya untuk format Mobile (HP), dihilangkan pada Desktop (sm:hidden) */}
+      {/* Dark Blurred Backdrop: Covers screen and places avatar below it */}
+      {/* Dark Blurred Backdrop: Only on mobile, completely removed on desktop */}
       {isOpen && (
         <div
           id="customer-support-mobile-backdrop"
@@ -547,6 +766,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
       {/* Customer Support Chat Window (Positioned on top at Z-50 with larger side gaps and slightly smaller width) */}
       {isOpen && (
         <div
+          ref={chatContainerRef}
           id="customer-support-chat-window"
           className="fixed bottom-20 sm:bottom-22 left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 z-50 w-[calc(100vw-3.75rem)] sm:w-[385px] max-w-[385px] h-[510px] sm:h-[550px] max-h-[76vh] sm:max-h-[80vh] bg-[#141413]/98 backdrop-blur-2xl border border-[#C4A27A]/50 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fadeIn text-[#FAF8F5] font-sans"
         >
@@ -570,13 +790,13 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
               <div className="flex flex-col text-left rtl:text-right leading-tight">
                 <div className="flex items-center space-x-1.5 rtl:space-x-reverse">
                   <span className="font-serif font-medium text-base tracking-wider text-[#FAF8F5]">
-                    Customer Support
+                    {t.headerTitle || 'Customer Support'}
                   </span>
                   <Sparkles className="w-3.5 h-3.5 text-[#C4A27A]" />
                 </div>
                 <span className="text-[11px] text-emerald-400 font-mono tracking-wider flex items-center space-x-1 rtl:space-x-reverse mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                  <span>Juma • Private Concierge</span>
+                  <span>{currentUi.conciergeRole}</span>
                 </span>
               </div>
             </div>
@@ -584,31 +804,12 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
             <button
               id="close-chat-assistant-btn"
               onClick={() => setIsOpen(false)}
-              className="p-1.5 rounded-full text-[#D8CCB8]/70 hover:text-white hover:bg-white/10 transition-colors focus:outline-none"
-              aria-label="Close Chat"
+              className="p-1.5 rounded-full text-[#D8CCB8]/70 hover:text-white hover:bg-white/10 transition-colors focus:outline-none cursor-pointer"
+              aria-label={currentUi.closeChat}
             >
               <X className="w-5 h-5" />
             </button>
           </div>
-
-          {/* Quick FAQ Shortcuts with Scroll Fade */}
-          <ScrollFadeContainer
-            className="relative max-w-full overflow-hidden bg-[#171615] border-b border-[#2C2B28]"
-            scrollClassName="px-3 py-2 flex items-center space-x-2 overflow-x-auto pr-10 no-scrollbar scroll-smooth"
-            leftGradientClass="bg-gradient-to-r from-[#171615] via-[#171615]/90 to-transparent"
-            rightGradientClass="bg-gradient-to-l from-[#171615] via-[#171615]/90 to-transparent"
-            fadeWidth="w-8 sm:w-10"
-          >
-            {faqShortcuts.map((action, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSendMessage(action.query)}
-                className="whitespace-nowrap px-3 py-1 bg-white/5 hover:bg-[#B8966C]/20 border border-white/10 hover:border-[#B8966C]/50 rounded-full text-[11px] text-[#D8CCB8] hover:text-[#FAF8F5] transition-all flex-shrink-0"
-              >
-                {action.label}
-              </button>
-            ))}
-          </ScrollFadeContainer>
 
           {/* Messages Container */}
           <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-[#0F0E0E]/95 text-sm">
@@ -688,11 +889,11 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
             rightGradientClass="bg-gradient-to-l from-[#171615] via-[#171615]/90 to-transparent"
             fadeWidth="w-8 sm:w-10"
           >
-            {t.quickPrompts.map((p, idx) => (
+            {(shuffledPrompts.length > 0 ? shuffledPrompts : t.quickPrompts).map((p, idx) => (
               <button
-                key={idx}
+                key={`${p.label}-${idx}`}
                 onClick={() => handleSendMessage(p.query)}
-                className="whitespace-nowrap px-2.5 py-1 bg-white/5 hover:bg-[#C4A27A]/20 hover:border-[#C4A27A]/50 border border-white/10 rounded-full text-[11px] text-[#D8CCB8] hover:text-[#FAF8F5] transition-all flex-shrink-0"
+                className="whitespace-nowrap px-2.5 py-1 bg-white/5 hover:bg-[#C4A27A]/20 hover:border-[#C4A27A]/50 border border-white/10 rounded-full text-[11px] text-[#D8CCB8] hover:text-[#FAF8F5] transition-all flex-shrink-0 cursor-pointer"
               >
                 {p.label}
               </button>
@@ -717,8 +918,8 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({
             <button
               type="submit"
               disabled={!inputValue.trim()}
-              className="p-2.5 bg-[#B8966C] hover:bg-[#C4A27A] disabled:opacity-40 disabled:cursor-not-allowed text-[#141413] rounded-xl transition-colors flex items-center justify-center flex-shrink-0"
-              aria-label="Send message"
+              className="p-2.5 bg-[#B8966C] hover:bg-[#C4A27A] disabled:opacity-40 disabled:cursor-not-allowed text-[#141413] rounded-xl transition-colors flex items-center justify-center flex-shrink-0 cursor-pointer"
+              aria-label={currentUi.sendAria}
             >
               <Send className={`w-4 h-4 ${isRtl ? 'rotate-180' : ''}`} />
             </button>

@@ -1,24 +1,38 @@
 import React, { useState } from 'react';
 import { Star, Quote, ChevronLeft, ChevronRight, CheckCircle, AlertCircle } from 'lucide-react';
 import { Language } from '../types';
-import { REVIEWS_DATA } from '../data/reviews';
-import { TRANSLATIONS } from '../data/translations';
+import { REVIEWS_UI_TRANSLATIONS, getLocalizedReviews } from '../data/reviewsTranslations';
 
 interface ReviewsSectionProps {
   currentLang: Language;
 }
 
 export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ currentLang }) => {
-  const t = TRANSLATIONS[currentLang];
+  const ui = REVIEWS_UI_TRANSLATIONS[currentLang] || REVIEWS_UI_TRANSLATIONS.en;
+  const reviews = getLocalizedReviews(currentLang);
   const [activeIdx, setActiveIdx] = useState(0);
 
   const handlePrev = () => {
-    setActiveIdx((prev) => (prev - 1 + REVIEWS_DATA.length) % REVIEWS_DATA.length);
+    setActiveIdx((prev) => (prev - 1 + reviews.length) % reviews.length);
   };
 
   const handleNext = () => {
-    setActiveIdx((prev) => (prev + 1) % REVIEWS_DATA.length);
+    setActiveIdx((prev) => (prev + 1) % reviews.length);
   };
+
+  const currentReview = reviews[activeIdx] || reviews[0];
+
+  const ariaLabels: Record<Language, { prev: string; next: string }> = {
+    en: { prev: 'Previous review', next: 'Next review' },
+    pl: { prev: 'Poprzednia opinia', next: 'Następna opinia' },
+    ar: { prev: 'التقييم السابق', next: 'التقييم التالي' },
+    zh: { prev: '上一条评价', next: '下一条评价' },
+    fr: { prev: 'Avis précédent', next: 'Avis suivant' },
+    sw: { prev: 'Maoni yaliyotangulia', next: 'Maoni yanayofuata' },
+    es: { prev: 'Opinión anterior', next: 'Opinión siguiente' },
+    it: { prev: 'Recensione precedente', next: 'Recensione successiva' },
+  };
+  const currentAria = ariaLabels[currentLang] || ariaLabels.en;
 
   return (
     <section id="reviews" className="py-24 md:py-32 bg-[#F4EFE6] text-[#1C1B1A]">
@@ -28,23 +42,23 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ currentLang }) =
           <div>
             <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.3em] uppercase text-[#A07E54] font-medium mb-3">
               <Quote className="w-3.5 h-3.5" />
-              <span>Guest Impressions</span>
+              <span>{ui.eyebrow}</span>
             </div>
             <h2
               id="reviews-heading"
               className="font-serif text-3xl sm:text-4xl md:text-5xl font-light tracking-[0.05em] uppercase text-[#141413]"
             >
-              {t.reviews.heading}
+              {ui.heading}
             </h2>
             <p className="text-[#6B6862] text-sm sm:text-base mt-2 max-w-xl">
-              {t.reviews.subhead}
+              {ui.subhead}
             </p>
           </div>
 
           {/* Sample Demo Badge */}
           <div className="mt-4 md:mt-0 flex items-center space-x-2 px-3 py-1.5 bg-[#E7DFD2] rounded text-[11px] font-mono uppercase tracking-wider text-[#73522E]">
             <AlertCircle className="w-3.5 h-3.5" />
-            <span>{t.reviews.sampleBadge}</span>
+            <span>{ui.sampleNoticeTitle}</span>
           </div>
         </div>
 
@@ -55,30 +69,30 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ currentLang }) =
           <div className="relative z-10 max-w-3xl">
             {/* 5 Stars */}
             <div className="flex items-center space-x-1 mb-6">
-              {[...Array(REVIEWS_DATA[activeIdx].rating)].map((_, i) => (
+              {[...Array(currentReview.rating)].map((_, i) => (
                 <Star key={i} className="w-4 h-4 fill-[#B8966C] text-[#B8966C]" />
               ))}
             </div>
 
             {/* Testimonial Quote */}
             <blockquote className="font-serif text-xl sm:text-2xl md:text-3xl text-[#141413] font-light leading-snug tracking-wide mb-8">
-              "{REVIEWS_DATA[activeIdx].reviewText}"
+              "{currentReview.reviewText}"
             </blockquote>
 
             {/* Author details */}
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="font-medium text-base text-[#141413] flex items-center space-x-2">
-                  <span>{REVIEWS_DATA[activeIdx].guestName}</span>
-                  {REVIEWS_DATA[activeIdx].isDemoSample && (
+                  <span>{currentReview.guestName}</span>
+                  {currentReview.isDemoSample && (
                     <span className="inline-flex items-center space-x-1 text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
                       <CheckCircle className="w-3 h-3" />
-                      <span>Verified Stay</span>
+                      <span>{ui.verifiedGuest}</span>
                     </span>
                   )}
                 </h4>
                 <p className="text-xs text-[#6B6862] tracking-wider mt-0.5">
-                  {REVIEWS_DATA[activeIdx].country} • {REVIEWS_DATA[activeIdx].villaStayed}
+                  {currentReview.country} • {currentReview.villaStayed}
                 </p>
               </div>
 
@@ -86,15 +100,15 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ currentLang }) =
               <div className="flex items-center space-x-2">
                 <button
                   onClick={handlePrev}
-                  className="p-2.5 rounded-full border border-[#E7DFD2] hover:bg-[#E7DFD2] text-[#141413] transition-colors"
-                  aria-label="Previous review"
+                  className="p-2.5 rounded-full border border-[#E7DFD2] hover:bg-[#E7DFD2] text-[#141413] transition-colors cursor-pointer"
+                  aria-label={currentAria.prev}
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleNext}
-                  className="p-2.5 rounded-full border border-[#E7DFD2] hover:bg-[#E7DFD2] text-[#141413] transition-colors"
-                  aria-label="Next review"
+                  className="p-2.5 rounded-full border border-[#E7DFD2] hover:bg-[#E7DFD2] text-[#141413] transition-colors cursor-pointer"
+                  aria-label={currentAria.next}
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -105,7 +119,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ currentLang }) =
 
         {/* Client Pitching Note */}
         <p className="text-center text-xs text-[#73522E] italic max-w-xl mx-auto">
-          {t.reviews.sampleNotice}
+          {ui.sampleNoticeBody}
         </p>
       </div>
     </section>

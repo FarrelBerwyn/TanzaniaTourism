@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { GalleryItem } from '../types';
+import { GalleryItem, Language } from '../types';
+import { GALLERY_TRANSLATIONS } from '../data/galleryTranslations';
 
 interface LightboxModalProps {
   item: GalleryItem | null;
   items: GalleryItem[];
+  currentLang?: Language;
   onClose: () => void;
   onNavigate: (newItem: GalleryItem) => void;
 }
@@ -12,11 +14,13 @@ interface LightboxModalProps {
 export const LightboxModal: React.FC<LightboxModalProps> = ({
   item,
   items,
+  currentLang = 'en',
   onClose,
   onNavigate,
 }) => {
   if (!item) return null;
 
+  const tGallery = GALLERY_TRANSLATIONS[currentLang] || GALLERY_TRANSLATIONS.en;
   const currentIndex = items.findIndex((i) => i.id === item.id);
 
   const handlePrev = (e: React.MouseEvent) => {
@@ -47,6 +51,8 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentIndex, items, onClose, onNavigate]);
 
+  const catLabel = tGallery.categories[item.category] || item.category;
+
   return (
     <div
       id="gallery-lightbox-modal"
@@ -56,13 +62,13 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
       {/* Top Controls */}
       <div className="flex items-center justify-between text-[#FAF8F5] z-10">
         <div className="font-mono text-xs text-[#D8CCB8] tracking-widest uppercase">
-          Image {currentIndex + 1} / {items.length} • {item.category}
+          {tGallery.lightbox.imageCounter(currentIndex + 1, items.length)} • {catLabel}
         </div>
 
         <button
           onClick={onClose}
-          className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#FAF8F5] transition-colors"
-          aria-label="Close lightbox"
+          className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#FAF8F5] transition-colors cursor-pointer"
+          aria-label={tGallery.lightbox.close}
         >
           <X className="w-6 h-6" />
         </button>
@@ -75,8 +81,8 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
       >
         <button
           onClick={handlePrev}
-          className="absolute left-2 sm:left-6 z-20 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white transition-all backdrop-blur-md"
-          aria-label="Previous image"
+          className="absolute left-2 sm:left-6 z-20 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white transition-all backdrop-blur-md cursor-pointer"
+          aria-label={tGallery.lightbox.prev}
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
@@ -90,8 +96,8 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({
 
         <button
           onClick={handleNext}
-          className="absolute right-2 sm:right-6 z-20 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white transition-all backdrop-blur-md"
-          aria-label="Next image"
+          className="absolute right-2 sm:right-6 z-20 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white transition-all backdrop-blur-md cursor-pointer"
+          aria-label={tGallery.lightbox.next}
         >
           <ChevronRight className="w-6 h-6" />
         </button>

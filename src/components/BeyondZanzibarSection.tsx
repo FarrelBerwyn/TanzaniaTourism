@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { Plane, Compass, Sparkles, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plane, Sparkles, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
 import { Language } from '../types';
-import { TANZANIA_DESTINATIONS, TanzaniaDestination } from '../data/tanzaniaDestinations';
+import { TanzaniaDestination } from '../data/tanzaniaDestinations';
+import {
+  getLocalizedTanzaniaDestinations,
+  BEYOND_UI_TRANSLATIONS,
+} from '../data/destinationTranslations';
 
 interface BeyondZanzibarSectionProps {
   currentLang: Language;
@@ -11,16 +15,19 @@ interface BeyondZanzibarSectionProps {
 
 export const BeyondZanzibarSection: React.FC<BeyondZanzibarSectionProps> = ({
   currentLang,
-  onOpenBooking,
   onOpenSupportChat,
 }) => {
-  const [activeDestination, setActiveDestination] = useState<TanzaniaDestination>(
-    TANZANIA_DESTINATIONS[0]
-  );
+  const ui = BEYOND_UI_TRANSLATIONS[currentLang] || BEYOND_UI_TRANSLATIONS.en;
+  const destinations = getLocalizedTanzaniaDestinations(currentLang);
+
+  const [activeDestinationId, setActiveDestinationId] = useState<string>(destinations[0]?.id || 'dest-serengeti');
+
+  const activeDestination =
+    destinations.find((d) => d.id === activeDestinationId) || destinations[0];
 
   const handlePlanJourney = (dest?: TanzaniaDestination) => {
     const targetDest = dest || activeDestination;
-    const prompt = `Hello Zanzirangi House Concierge, I would like to plan a mainland Tanzania safari journey to ${targetDest.name} (${targetDest.tagline}) combined with our stay in Zanzibar. Please provide custom safari details.`;
+    const prompt = `${ui.chatPrompt} ${targetDest.name} (${targetDest.tagline}).`;
     if (onOpenSupportChat) {
       onOpenSupportChat(prompt);
     } else {
@@ -39,30 +46,30 @@ export const BeyondZanzibarSection: React.FC<BeyondZanzibarSectionProps> = ({
         <div className="max-w-3xl mb-16 md:mb-20">
           <div className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[#C4A27A] text-[11px] tracking-[0.32em] uppercase font-mono mb-4">
             <Plane className="w-3.5 h-3.5" />
-            <span>BEYOND ZANZIBAR</span>
+            <span>{ui.eyebrow}</span>
           </div>
 
           <h2
             id="beyond-zanzibar-heading"
             className="font-serif text-3xl sm:text-5xl md:text-6xl font-light tracking-[0.04em] leading-[1.12] text-[#FAF8F5] uppercase mb-6"
           >
-            ONE ISLAND. A WHOLE TANZANIA TO DISCOVER.
+            {ui.heading}
           </h2>
 
           <p className="font-sans text-base sm:text-lg md:text-xl font-light text-[#D8CCB8] leading-relaxed">
-            Extend your journey from the Indian Ocean to the heart of Tanzania's wild landscapes. Through our trusted luxury safari partners, Zanzirangi House seamlessly connects barefoot beach serenity with the untamed wonder of the African bush.
+            {ui.subhead}
           </p>
         </div>
 
         {/* Destination Selector Tabs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 mb-12">
-          {TANZANIA_DESTINATIONS.map((dest) => {
+          {destinations.map((dest) => {
             const isSelected = activeDestination.id === dest.id;
             return (
               <button
                 key={dest.id}
-                onClick={() => setActiveDestination(dest)}
-                className={`text-left p-3 sm:p-5 lg:p-6 rounded-xl border transition-all duration-300 overflow-hidden ${
+                onClick={() => setActiveDestinationId(dest.id)}
+                className={`text-left p-3 sm:p-5 lg:p-6 rounded-xl border transition-all duration-300 overflow-hidden cursor-pointer ${
                   isSelected
                     ? 'bg-[#22211F] border-[#C4A27A] shadow-xl text-white'
                     : 'bg-[#1C1B1A]/80 border-[#2C2B28] text-[#D8CCB8]/70 hover:border-[#FAF8F5]/30 hover:text-white'
@@ -104,7 +111,7 @@ export const BeyondZanzibarSection: React.FC<BeyondZanzibarSectionProps> = ({
 
             <div className="absolute bottom-6 left-6 right-6 text-white">
               <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#D8CCB8] block mb-1">
-                Fly-in Connection from Zanzibar
+                {ui.flightLabel} {activeDestination.flightTimeFromZanzibar}
               </span>
               <p className="font-serif text-2xl sm:text-3xl font-light italic">
                 "{activeDestination.tagline}"
@@ -117,7 +124,7 @@ export const BeyondZanzibarSection: React.FC<BeyondZanzibarSectionProps> = ({
             <div className="space-y-6">
               <div>
                 <span className="text-xs font-mono tracking-widest text-[#C4A27A] uppercase block mb-1">
-                  Mainland Tanzania Safari
+                  {ui.eyebrow}
                 </span>
                 <h3 className="font-serif text-3xl sm:text-4xl font-light text-[#FAF8F5] tracking-wide">
                   {activeDestination.name}
@@ -134,7 +141,7 @@ export const BeyondZanzibarSection: React.FC<BeyondZanzibarSectionProps> = ({
               {/* Highlights */}
               <div className="space-y-2.5 pt-4 border-t border-[#2C2B28]">
                 <span className="text-[11px] font-mono tracking-widest uppercase text-[#A07E54] block">
-                  Safari Highlights:
+                  {ui.highlightsLabel}
                 </span>
                 {activeDestination.highlights.map((h, i) => (
                   <div key={i} className="flex items-center space-x-2.5 text-xs text-[#FAF8F5]/90">
@@ -149,15 +156,15 @@ export const BeyondZanzibarSection: React.FC<BeyondZanzibarSectionProps> = ({
             <div className="pt-6 border-t border-[#2C2B28] space-y-3">
               <button
                 onClick={() => handlePlanJourney(activeDestination)}
-                className="w-full py-4 px-6 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-bold tracking-[0.2em] uppercase rounded flex items-center justify-center space-x-2 transition-all duration-300 shadow-xl active:scale-95"
+                className="w-full py-4 px-6 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-bold tracking-[0.2em] uppercase rounded flex items-center justify-center space-x-2 transition-all duration-300 shadow-xl active:scale-95 cursor-pointer"
               >
-                <span>PLAN YOUR TANZANIA JOURNEY</span>
+                <span>{ui.planSafariBtn}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <div className="flex items-center justify-center space-x-2 text-[11px] font-mono text-[#D8CCB8]/70">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#C4A27A]" />
-                <span>Private chartered bush flights & licensed luxury camps</span>
+                <span>{activeDestination.bestFor}</span>
               </div>
             </div>
           </div>

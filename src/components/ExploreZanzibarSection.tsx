@@ -1,7 +1,11 @@
 import React from 'react';
 import { MapPin, ArrowRight, Compass } from 'lucide-react';
 import { Language } from '../types';
-import { ZANZIBAR_DESTINATIONS, ZanzibarDestination } from '../data/exploreZanzibar';
+import { ZanzibarDestination } from '../data/exploreZanzibar';
+import {
+  getLocalizedZanzibarDestinations,
+  EXPLORE_UI_TRANSLATIONS,
+} from '../data/destinationTranslations';
 import { PROPERTY_CONFIG } from '../data/propertyConfig';
 
 interface ExploreZanzibarSectionProps {
@@ -11,10 +15,12 @@ interface ExploreZanzibarSectionProps {
 
 export const ExploreZanzibarSection: React.FC<ExploreZanzibarSectionProps> = ({
   currentLang,
-  onOpenBooking,
 }) => {
+  const ui = EXPLORE_UI_TRANSLATIONS[currentLang] || EXPLORE_UI_TRANSLATIONS.en;
+  const destinations = getLocalizedZanzibarDestinations(currentLang);
+
   const handleExploreDestination = (dest: ZanzibarDestination) => {
-    const text = `Hello Zanzirangi House Concierge, I would like to arrange an excursion to ${dest.name} (${dest.theme}) during our stay.`;
+    const text = `${ui.whatsappPrompt} ${dest.name} (${dest.theme}).`;
     const url = `https://wa.me/${PROPERTY_CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
@@ -26,24 +32,24 @@ export const ExploreZanzibarSection: React.FC<ExploreZanzibarSectionProps> = ({
         <div className="max-w-3xl mb-16 md:mb-20">
           <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.32em] uppercase text-[#A07E54] font-semibold mb-3">
             <Compass className="w-3.5 h-3.5" />
-            <span>The Spice Island Archipelago</span>
+            <span>{ui.eyebrow}</span>
           </div>
 
           <h2
             id="explore-zanzibar-heading"
             className="font-serif text-3xl sm:text-5xl md:text-6xl font-light tracking-[0.04em] uppercase text-[#141413] mb-4"
           >
-            EXPLORE ZANZIBAR
+            {ui.heading}
           </h2>
 
           <p className="text-[#6B6862] text-sm sm:text-base leading-relaxed">
-            From the UNESCO coral ragstone alleys of Stone Town to vibrant marine atolls and lush indigenous mahogany forests, discover the storied horizons that make our island legendary.
+            {ui.subhead}
           </p>
         </div>
 
         {/* 5 Destination Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {ZANZIBAR_DESTINATIONS.map((dest, idx) => (
+          {destinations.map((dest, idx) => (
             <div
               key={dest.id}
               className={`bg-[#FAF8F5] border border-[#E7DFD2] rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col justify-between group ${
@@ -101,7 +107,7 @@ export const ExploreZanzibarSection: React.FC<ExploreZanzibarSectionProps> = ({
                 <div className="pt-4 border-t border-[#E7DFD2]">
                   <button
                     onClick={() => handleExploreDestination(dest)}
-                    className="w-full py-3.5 px-4 bg-[#1C1B1A] group-hover:bg-[#B8966C] text-[#FAF8F5] group-hover:text-[#141413] text-xs font-bold tracking-[0.18em] uppercase rounded flex items-center justify-center space-x-2 transition-all duration-300 shadow-sm"
+                    className="w-full py-3.5 px-4 bg-[#1C1B1A] group-hover:bg-[#B8966C] text-[#FAF8F5] group-hover:text-[#141413] text-xs font-bold tracking-[0.18em] uppercase rounded flex items-center justify-center space-x-2 transition-all duration-300 shadow-sm cursor-pointer"
                   >
                     <span>{dest.ctaLabel}</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />

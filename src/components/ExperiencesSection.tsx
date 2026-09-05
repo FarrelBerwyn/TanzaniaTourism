@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Compass, Clock, ArrowRight, MessageSquare, Sparkles } from 'lucide-react';
+import { Compass, Clock, ArrowRight, MessageSquare, Sparkles, X } from 'lucide-react';
 import { Language } from '../types';
-import { EXPERIENCES_DATA, Experience } from '../data/experiences';
+import { Experience } from '../data/experiences';
+import { getLocalizedExperiences, EXPERIENCES_UI_TRANSLATIONS } from '../data/experienceTranslations';
+import { TRANSLATIONS } from '../data/translations';
 import { ScrollFadeContainer } from './ScrollFadeContainer';
+import { ScrollReveal, StaggerContainer, StaggerItem } from './ScrollReveal';
 
 interface ExperiencesSectionProps {
   currentLang: Language;
@@ -15,44 +18,104 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
   onOpenBooking,
   onOpenSupportChat,
 }) => {
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  const ui = EXPERIENCES_UI_TRANSLATIONS[currentLang] || EXPERIENCES_UI_TRANSLATIONS.en;
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeModalExp, setActiveModalExp] = useState<Experience | null>(null);
 
   const categories = [
-    { key: 'all', label: 'All 10 Experiences' },
-    { key: 'cultural', label: 'Culture & Heritage' },
-    { key: 'marine', label: 'Marine & Atolls' },
-    { key: 'sailing', label: 'Dhow Sailing' },
-    { key: 'nature', label: 'Nature & Spices' },
-    { key: 'adventure', label: 'Sport Fishing' },
+    { key: 'all', label: ui.allCategory },
+    { key: 'cultural', label: ui.culturalCategory },
+    { key: 'marine', label: ui.marineCategory },
+    { key: 'sailing', label: ui.sailingCategory },
+    { key: 'nature', label: ui.natureCategory },
+    { key: 'adventure', label: ui.adventureCategory },
   ];
 
-  const filteredExperiences = EXPERIENCES_DATA.filter((exp) => {
+  const localizedExperiences = getLocalizedExperiences(currentLang);
+
+  const filteredExperiences = localizedExperiences.filter((exp) => {
     if (selectedCategory === 'all') return true;
     return exp.category === selectedCategory;
   });
+
+  const conciergeInclusions: Record<Language, { header: string; body: string; addToBooking: string }> = {
+    en: {
+      header: 'Concierge Inclusions:',
+      body: 'Private chauffeur transfers from Zanzirangi House, licensed Swahili guides, chilled refreshments, and equipment provided.',
+      addToBooking: 'Add to Reservation',
+    },
+    fr: {
+      header: 'Inclus dans le Service Conciergerie :',
+      body: 'Chauffeur privé depuis Zanzirangi House, guides swahilis certifiés, rafraîchissements frais et matériel fourni.',
+      addToBooking: 'Ajouter à ma Réservation',
+    },
+    sw: {
+      header: 'Vitu Vilivyojumuishwa na Mhudumu:',
+      body: 'Usafiri wa gari binafsi kutoka Zanzirangi House, waongozaji wazawa wa Zanzibar, vinywaji baridi na vifaa vya safari.',
+      addToBooking: 'Weka Kwenye Nafasi Yako',
+    },
+    es: {
+      header: 'Incluido en el Servicio de Conserjería:',
+      body: 'Traslados privados con chófer desde Zanzirangi House, guías locales certificados, bebidas frías y equipo completo.',
+      addToBooking: 'Añadir a mi Reserva',
+    },
+    it: {
+      header: 'Incluso nel Servizio Concierge:',
+      body: 'Trasferimenti con autista privato da Zanzirangi House, guide swahili certificate, bevande rinfrescanti ed equipaggiamento.',
+      addToBooking: 'Aggiungi alla Prenotazione',
+    },
+    pl: {
+      header: 'W cenie opieki Concierge:',
+      body: 'Prywatny transfer z kierowcą z Zanzirangi House, certyfikowani przewodnicy suahili, zimne napoje i pełne wyposażenie.',
+      addToBooking: 'Dodaj do Rezerwacji',
+    },
+    ar: {
+      header: 'المزايا المشمولة مع الكونسيرج:',
+      body: 'خدمة نقل بسيارة خاصة وسائق من منتجع زانزيرانجي، ومرشدون محليون معتمدون، ومشروبات منعشة ومعدات كاملة.',
+      addToBooking: 'إضافة إلى تفاصيل الحجز',
+    },
+    zh: {
+      header: '专属礼宾礼遇包含：',
+      body: '提供 Zanzirangi House 专车往返接送、持证资深斯瓦希里向导、冷藏迎宾软饮及全程专业探索装备。',
+      addToBooking: '加入下榻预订清单',
+    },
+  };
+
+  const currentConcierge = conciergeInclusions[currentLang] || conciergeInclusions.en;
+
+  const experiencePrompts: Record<Language, (title: string) => string> = {
+    en: (title) => `Hello Zanzirangi Concierge, I would like details and availability for ${title}.`,
+    fr: (title) => `Bonjour Conciergerie Zanzirangi, je souhaiterais des détails et les disponibilités pour ${title}.`,
+    sw: (title) => `Habari Mhudumu wa Zanzirangi, naomba maelezo na upatikanaji wa huduma ya ${title}.`,
+    es: (title) => `Hola Conserjería Zanzirangi, me gustaría conocer detalles y disponibilidad para ${title}.`,
+    it: (title) => `Buongiorno Concierge Zanzirangi, vorrei maggiori dettagli e disponibilità per ${title}.`,
+    pl: (title) => `Dzień dobry Zanzirangi Concierge, poproszę o szczegóły oraz dostępność atrakcji: ${title}.`,
+    ar: (title) => `مرحبًا كونسيرج زانزيرانجي، أود الاستفسار عن تفاصيل وتوافر ${title}.`,
+    zh: (title) => `您好 Zanzirangi 私人管家，我想了解关于“${title}”的详细行程与预订名额。`,
+  };
 
   return (
     <section id="experiences" className="pt-8 sm:pt-12 md:pt-16 pb-20 sm:pb-28 md:pb-36 bg-[#FAF8F5] text-[#1C1B1A]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-6 border-b border-[#E7DFD2]">
+        <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 pb-6 border-b border-[#E7DFD2]">
           <div>
             <div className="inline-flex items-center space-x-2 text-[11px] tracking-[0.3em] uppercase text-[#A07E54] font-semibold mb-3">
               <Compass className="w-3.5 h-3.5" />
-              <span>Curated Island Adventures</span>
+              <span>{ui.eyebrow}</span>
             </div>
             <h2
               id="experiences-heading"
               className="font-serif text-3xl sm:text-5xl md:text-6xl font-light tracking-[0.04em] uppercase text-[#141413]"
             >
-              EXPERIENCES
+              {t.nav.experiences || 'EXPERIENCES'}
             </h2>
             <p className="font-serif italic text-xl sm:text-2xl text-[#8E6B40] font-light mt-2">
-              "Discover Zanzibar beyond the ordinary."
+              {ui.tagline}
             </p>
             <p className="text-[#6B6862] text-sm sm:text-base mt-2 max-w-2xl">
-              Immerse yourself in centuries of Swahili maritime history, protected coral reefs, dolphin sanctuaries, and aromatic spice groves curated exclusively for Zanzirangi House guests.
+              {ui.narrative}
             </p>
           </div>
 
@@ -78,12 +141,12 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
               </button>
             ))}
           </ScrollFadeContainer>
-        </div>
+        </ScrollReveal>
 
         {/* 10 Luxury Experience Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 mb-16">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 mb-16">
           {filteredExperiences.map((exp) => (
-            <div
+            <StaggerItem
               key={exp.id}
               className="bg-[#F4EFE6] border border-[#E7DFD2] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group"
             >
@@ -126,7 +189,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
                     onClick={() => setActiveModalExp(exp)}
                     className="flex-1 py-3 px-4 bg-[#1C1B1A] group-hover:bg-[#B8966C] text-[#FAF8F5] group-hover:text-[#141413] text-xs font-semibold tracking-[0.16em] uppercase rounded flex items-center justify-center space-x-2 transition-all duration-300"
                   >
-                    <span>EXPLORE EXPERIENCE</span>
+                    <span>{ui.exploreButton}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
 
@@ -140,16 +203,16 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
                       }
                     }}
                     className="p-3 border border-[#B8966C]/60 hover:bg-[#B8966C]/15 text-[#8E6B40] rounded transition-colors cursor-pointer"
-                    title="Inquire with Customer Support"
+                    title={ui.inquireConcierge}
                     aria-label={`Inquire about ${exp.title} with Customer Support`}
                   >
                     <MessageSquare className="w-4 h-4" />
                   </button>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
 
       {/* Experience Detail Lightbox Modal */}
@@ -171,7 +234,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
                 className="absolute top-4 right-4 p-2 bg-black/70 hover:bg-black text-white rounded-full transition-colors focus:outline-none"
                 aria-label="Close modal"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
               <div className="absolute bottom-4 left-4 px-3 py-1 bg-black/75 backdrop-blur rounded text-xs font-mono text-[#C4A27A] uppercase">
                 {activeModalExp.tag}
@@ -197,17 +260,18 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
 
               <div className="p-4 bg-[#F4EFE6] border border-[#E7DFD2] rounded-xl text-xs text-[#55524B] space-y-1">
                 <span className="font-semibold text-[#141413] block">
-                  Concierge Inclusions:
+                  {currentConcierge.header}
                 </span>
                 <p>
-                  Private chauffeur transfers from Zanzirangi House, licensed Swahili guides, chilled refreshments, and equipment provided.
+                  {currentConcierge.body}
                 </p>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
                 <button
                   onClick={() => {
-                    const prompt = `Hello Zanzirangi Concierge, I would like details and availability for ${activeModalExp.title}.`;
+                    const promptFn = experiencePrompts[currentLang] || experiencePrompts.en;
+                    const prompt = promptFn(activeModalExp.title);
                     setActiveModalExp(null);
                     if (onOpenSupportChat) {
                       onOpenSupportChat(prompt);
@@ -218,7 +282,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
                   className="w-full sm:flex-1 py-3.5 px-5 bg-[#B8966C] hover:bg-[#C4A27A] text-[#141413] text-xs font-semibold tracking-[0.18em] uppercase rounded flex items-center justify-center space-x-2 transition-all shadow-md cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>SPEAK WITH CUSTOMER SUPPORT</span>
+                  <span>{ui.inquireConcierge}</span>
                 </button>
 
                 <button
@@ -228,7 +292,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
                   }}
                   className="w-full sm:w-auto py-3.5 px-6 border border-[#1C1B1A]/30 hover:border-[#1C1B1A] text-[#1C1B1A] text-xs font-semibold tracking-[0.18em] uppercase rounded transition-colors"
                 >
-                  Add to Reservation
+                  {currentConcierge.addToBooking}
                 </button>
               </div>
             </div>
